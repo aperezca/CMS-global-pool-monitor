@@ -6,7 +6,7 @@ source /etc/profile.d/condor.sh
 
 collector=$(/home/aperez/collector.sh)
 
-condor_status -pool $collector -af SlotType TotalSlotCpus CPUs State Activity |sort |uniq -c |sort -nr >/home/aperez/status/cores_all_glideins.txt
+condor_status -pool $collector -const '((IOslots=?=undefined) || (IOslots != 1))' -af SlotType TotalSlotCpus CPUs State Activity |sort |uniq -c |sort -nr >/home/aperez/status/cores_all_glideins.txt
 
 cores_mcore_busy=0
 cores_mcore_idle=0
@@ -31,9 +31,9 @@ echo $date_all $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_scor
 #------------------------------------------
 #Some improvement:
 date_s=`date -u +%s`
-condor_status -pool $collector -const '(GLIDEIN_ToRetire-'${date_s}'>0)' -af  SlotType TotalSlotCPUs CPUs Memory State Activity | sort |uniq -c >/home/aperez/status/cores_fresh_glideins.txt
+condor_status -pool $collector -const '(GLIDEIN_ToRetire-'${date_s}'>0) && ((IOslots=?=undefined) || (IOslots != 1))' -af  SlotType TotalSlotCPUs CPUs Memory State Activity | sort |uniq -c >/home/aperez/status/cores_fresh_glideins.txt
 date_s=`date -u +%s`
-condor_status -pool $collector -const '(GLIDEIN_ToRetire-'${date_s}'<0)' -af  SlotType TotalSlotCPUs CPUs State Activity | sort |uniq -c >/home/aperez/status/cores_retiring_glideins.txt
+condor_status -pool $collector -const '(GLIDEIN_ToRetire-'${date_s}'<0) && ((IOslots=?=undefined) || (IOslots != 1))' -af  SlotType TotalSlotCPUs CPUs State Activity | sort |uniq -c >/home/aperez/status/cores_retiring_glideins.txt
 
 now=$(date -u)
 OUTDIR="/crabprod/CSstoragePath/aperez/HTML/"

@@ -8,7 +8,7 @@ collector=$(/home/aperez/collector.sh)
 
 condor_status -pool $collector -const '(SlotType=?="Partitionable")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus |sort |uniq -c |sort -nr >/home/aperez/status/all_partitionable_glideins.txt
 
-condor_status -pool $collector -const '(SlotType=?="Static")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus |sort |uniq -c |sort -nr >/home/aperez/status/all_static_glideins.txt
+condor_status -pool $collector -const '(SlotType=?="Static") && ((IOslots=?=undefined) || (IOslots != 1))' -af GLIDEIN_CMSSite SlotType TotalSlotCpus |sort |uniq -c |sort -nr >/home/aperez/status/all_static_glideins.txt
 
 size_part_T1s=0
 size_part_T2s=0

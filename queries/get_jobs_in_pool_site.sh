@@ -30,7 +30,7 @@ done<$OUTDIR/globalpool_running_jobs.txt
 echo $date_all $global_running_prod $global_running_crab >>/home/aperez/out/jobs_running_global
 
 #----- Per site info for those running mcore
-for list in T1 T2; do
+for list in T1 T2 T0; do
 	#echo $list
 	cat $OUTDIR/globalpool_running_jobs.txt |grep $(echo $list"_") >$OUTDIR/running_jobs_$list.txt
 	for site in `cat "/home/aperez/entries/"$list"_sites"`; do

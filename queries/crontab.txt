@@ -1,0 +1,17 @@
+# Monitor pilots and jobs in the global pool in general
+*/10 * * * * /home/aperez/run_monitor.sh >/dev/null 2>&1
+*/20 * * * * /home/aperez/run_monitor_html.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_t2s.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_t0.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_ucsd.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_jobs.sh >/dev/null 2>&1
+# Monthly plots
+00 */4 * * * /home/aperez/run_monitor_long.sh >/dev/null 2>&1
+# Status of running glideins in pool by Tiers
+*/20 * * * * /home/aperez/multi-core_status.sh T1s >/dev/null 2>&1
+*/20 * * * * /home/aperez/multi-core_status.sh T2s >/dev/null 2>&1
+*/20 * * * * /home/aperez/multi-core_t0_status.sh >/dev/null 2>&1
+#Global status of all running glideins in pool
+*/20 * * * * /home/aperez/multi-core_global_status.sh >/dev/null 2>&1
+# Job resource and usage watchdog
+*/20 * * * * /home/aperez/get_jobs_in_pool_resource_usage.sh >/dev/null 2>&1
