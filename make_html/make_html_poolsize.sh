@@ -7,7 +7,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"global_pool_size_"$int"h.html"
+OUT="/crabprod/CSstoragePath/aperez/"$long"global_pool_size_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS global pool running glideins monitor</title>
@@ -89,19 +89,62 @@ var chart_poolidle = new google.visualization.AreaChart(document.getElementById(
 chart_poolidle.draw(data_poolidle, options_poolidle);">>$OUT
 
 #----------------------
+#Pool busy and idle cores efficiencies:
+echo "var data_pooleff = new google.visualization.DataTable();     
+data_pooleff.addColumn('datetime', 'Date');
+data_pooleff.addColumn('number', 'mcore occupation'); 
+data_pooleff.addColumn('number', 'score occupation');
+data_pooleff.addColumn('number', 'pool occupation');
+
+data_pooleff.addRows([">>$OUT
+tail -n $n_lines /home/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+	m_b=$(echo $line |awk '{print $2}')
+	m_i=$(echo $line |awk '{print $3}')
+	s_b=$(echo $line |awk '{print $4}')
+	s_i=$(echo $line |awk '{print $5}')
+	if [[ $m_b+$m_i -ne 0 ]] && [[ $s_b+$s_i -ne 0 ]]; then
+		content=$(echo $m_b $m_i $s_b $s_i |awk '{print $1/($1+$2)", "$3/($3+$4)", "($1+$3)/($1+$2+$3+$4)}')
+		echo "[new Date($timemil), $content], " >>$OUT
+	fi
+done </home/aperez/status/input_pool_idle$int
+rm /home/aperez/status/input_pool_idle$int
+
+echo "      ]);
+var options_pooleff = {
+        title: 'Global pool busy and idle pilot occupation percentages',
+        isStacked: 'false',
+        explorer: {},
+        'height':500,
+        colors: ['#0040FF', '#0060FF', '#9090FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Occupation (%)', minValue: 0, maxValue: 1}
+        };
+
+var chart_pooleff = new google.visualization.AreaChart(document.getElementById('chart_div_pooleff'));
+chart_pooleff.draw(data_pooleff, options_pooleff);">>$OUT
+
+#----------------------
 #Idle cores in mcore pilots:
 echo "var data_mcoreidle = new google.visualization.DataTable();
 data_mcoreidle.addColumn('datetime', 'Date');
-data_mcoreidle.addColumn('number', 'mcore retire');
-data_mcoreidle.addColumn('number', 'mcore memory');
-data_mcoreidle.addColumn('number', 'mcore usable');
+data_mcoreidle.addColumn('number', 'retiring');
+data_mcoreidle.addColumn('number', 'memory');
+data_mcoreidle.addColumn('number', 'idle unclaimed');
+data_mcoreidle.addColumn('number', 'idle claimed');
 
 data_mcoreidle.addRows([">>$OUT
 tail -n $n_lines /home/aperez/out/pool_mcoreidle >/home/aperez/status/input_pool_mcoreidle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+	if [[ $(echo $line |awk '{print $5}') != "" ]]; then
+        	content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
+	else
+		content=$(echo $line |awk '{print $2", "$3", "$4}'; echo ", 0")
+	fi
         echo "[new Date($timemil), $content], " >>$OUT
 done </home/aperez/status/input_pool_mcoreidle$int
 stats_mcoreidle=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_mcoreidle$int)
@@ -113,7 +156,7 @@ var options_mcoreidle = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#FF4000', '#FF8000', '#FF0000'],
+        colors: ['#FF4000', '#FF8000', '#FF0000', '#FF0040'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of cores'}
         };
@@ -271,7 +314,7 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>CMS GLOBAL POOL MONITOR: Global pool size and components for the last '$int' hours<br>
+        <h2>CMS GLOBAL POOL MONITOR: Global pool size and components for the last '$int' hours, updated at '$(date -u)'<br>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_24h.html">24h</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_168h.html">1week</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_720h.html">1month</a>
@@ -302,6 +345,7 @@ p {text-align: center;
  <!--Div to hold the charts-->'>>$OUT
 echo ' <div id="chart_div_pool"></div><p>'$(echo "[avg, min, max]: " $stats_size)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_poolidle"></div><p>'$(echo "[avg, min, max]: " $stats_idle)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_pooleff"></div><br><br>'>>$OUT
 echo ' <div id="chart_div_mcoreidle"></div><p>'$(echo "[avg, min, max]: " $stats_mcoreidle)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_FE"></div><p>'$(echo "[avg, min, max]: " $stats_FE)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobs"></div><p>'$(echo "[avg, min, max]: " $stats_jobs)'</p><br><br>'>>$OUT

@@ -66,7 +66,7 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>UCSD POOL MONITOR size for the last '$int' hours<br>
+        <h2>UCSD POOL MONITOR size for the last '$int' hours, updated at '$(date -u)'<br>
 	</h2><br>
     </div>
 <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/ucsd_pool_size_24h.html">24h</a>

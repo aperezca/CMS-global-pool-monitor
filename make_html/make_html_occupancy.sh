@@ -86,7 +86,7 @@ echo '
 
 <body>
     <div id="header">
-        <h2>CORE OCCUPANCY OF RUNNING MULTICORE PILOTS AT CMS T1s for the last '$int' hours<br>
+        <h2>CORE OCCUPANCY OF RUNNING MULTICORE PILOTS AT CMS T1s for the last '$int' hours, updated at '$(date -u)'<br>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_usage_t1s_'$int'h.html">(USAGE)</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_factory_t1s_'$int'h.html">(FACTORY STATUS)</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_frontend_t1s_'$int'h.html">(FRONT-END)</a>

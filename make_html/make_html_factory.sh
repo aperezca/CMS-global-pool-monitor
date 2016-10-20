@@ -68,7 +68,7 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>FACTORY STATUS OF MULTICORE PILOTS AT CMS T1s for the last '$int' hours<br>
+        <h2>FACTORY STATUS OF MULTICORE PILOTS AT CMS T1s for the last '$int' hours, updated at '$(date -u)'<br>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_usage_t1s_'$int'h.html">(USAGE)</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_occupancy_t1s_'$int'h.html">(OCCUPANCY)</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_frontend_t1s_'$int'h.html">(FRONT-END)</a>

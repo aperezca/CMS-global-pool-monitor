@@ -68,7 +68,7 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>GLOBAL POOL RUNNING JOBS AT CMS '$list's for the last '$int' hours<br>
+        <h2>GLOBAL POOL RUNNING JOBS AT CMS '$list's for the last '$int' hours, updated at '$(date -u)'<br>
 	</h2>
     </div>
 <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_'$list'_24h.html">24h</a>
