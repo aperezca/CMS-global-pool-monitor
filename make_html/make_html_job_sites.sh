@@ -22,7 +22,7 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
 
-for site in `cat "/home/aperez/entries/"$list"_sites"`; do
+for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
 	#echo $site
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
@@ -77,7 +77,7 @@ p {text-align: center;
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
-for site in `cat "/home/aperez/entries/"$list"_sites"`; do
+for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
 	var="stats_$site"
         echo ' <div id="chart_div_'$site'"></div><p>'$(echo "[avg, min, max]: " "${!var}")'</p><br><br>'
 done>>$OUT

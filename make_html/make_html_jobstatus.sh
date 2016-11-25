@@ -25,14 +25,13 @@ echo "var data_jobs = new google.visualization.DataTable();
 data_jobs.addColumn('datetime', 'Date');
 data_jobs.addColumn('number', 'Runing jobs');
 data_jobs.addColumn('number', 'Idle jobs');
-data_jobs.addColumn('number', 'Held jobs');
 
 data_jobs.addRows([">>$OUT
 tail -n $n_lines /home/aperez/out/jobs_size >/home/aperez/status/input_jobs_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
 done </home/aperez/status/input_jobs_size$int
 stats_jobs=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size$int)
@@ -44,7 +43,7 @@ var options_jobs = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-	colors: ['#0040FF', '#FFBF00', '#FF0000'],
+	colors: ['#0040FF', '#FFBF00'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of jobs'}
         };
@@ -57,14 +56,13 @@ echo "var data_jobcores = new google.visualization.DataTable();
 data_jobcores.addColumn('datetime', 'Date');
 data_jobcores.addColumn('number', 'Cores runing jobs');
 data_jobcores.addColumn('number', 'Cores idle jobs');
-data_jobcores.addColumn('number', 'Cores held jobs');
 
 data_jobcores.addRows([">>$OUT
 tail -n $n_lines /home/aperez/out/jobcores_size >/home/aperez/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
 done </home/aperez/status/input_jobcores_size$int
 stats_jobcores=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size$int)
@@ -76,7 +74,7 @@ var options_jobcores = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0040FF', '#FFBF00', '#FF0000'],
+        colors: ['#0040FF', '#FFBF00'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of cores'}
         };
@@ -122,14 +120,13 @@ echo "var data_jobs_prod = new google.visualization.DataTable();
 data_jobs_prod.addColumn('datetime', 'Date');
 data_jobs_prod.addColumn('number', 'Runing jobs');
 data_jobs_prod.addColumn('number', 'Idle jobs');
-data_jobs_prod.addColumn('number', 'Held jobs');
 
 data_jobs_prod.addRows([">>$OUT
 tail -n $n_lines /home/aperez/out/jobs_size_prod >/home/aperez/status/input_jobs_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
 done </home/aperez/status/input_jobs_size_prod$int
 stats_jobs_prod=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_prod$int)
@@ -141,7 +138,7 @@ var options_jobs_prod = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0040FF', '#FFBF00', '#FF0000'],
+        colors: ['#0040FF', '#FFBF00'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of jobs'}
         };
@@ -156,14 +153,13 @@ echo "var data_jobs_crab = new google.visualization.DataTable();
 data_jobs_crab.addColumn('datetime', 'Date');
 data_jobs_crab.addColumn('number', 'Runing jobs');
 data_jobs_crab.addColumn('number', 'Idle jobs');
-data_jobs_crab.addColumn('number', 'Held jobs');
 
 data_jobs_crab.addRows([">>$OUT
 tail -n $n_lines /home/aperez/out/jobs_size_crab >/home/aperez/status/input_jobs_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
 done </home/aperez/status/input_jobs_size_crab$int
 stats_jobs_crab=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_crab$int)
@@ -175,7 +171,7 @@ var options_jobs_crab = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0040FF', '#FFBF00', '#FF0000'],
+        colors: ['#0040FF', '#FFBF00'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of jobs'}
         };
@@ -190,14 +186,13 @@ echo "var data_jobs_other = new google.visualization.DataTable();
 data_jobs_other.addColumn('datetime', 'Date');
 data_jobs_other.addColumn('number', 'Runing jobs');
 data_jobs_other.addColumn('number', 'Idle jobs');
-data_jobs_other.addColumn('number', 'Held jobs');
 
 data_jobs_other.addRows([">>$OUT
 tail -n $n_lines /home/aperez/out/jobs_size_other >/home/aperez/status/input_jobs_size_other$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
 done </home/aperez/status/input_jobs_size_other$int
 stats_jobs_other=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_other$int)
@@ -209,7 +204,7 @@ var options_jobs_other = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0040FF', '#FFBF00', '#FF0000'],
+        colors: ['#0040FF', '#FFBF00'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of jobs'}
         };
