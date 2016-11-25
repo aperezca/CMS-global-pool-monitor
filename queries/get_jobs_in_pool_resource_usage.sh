@@ -12,15 +12,21 @@ now=$(date -u)
 echo "## INFO ON JOBS IN CMS GLOBAL POOL UPDATED AT" $now >$OUTDIR/globalpool_jobs_info_new.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
 
-echo "## RUNNING JOBS:">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## number_jobs RequestCPUs RequestMemory RequestDisk WMAgent_RequestName CRAB_ReqName">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
-condor_q -pool $collector -global -constraint '(JobStatus == 2)' -af RequestCPUs RequestMemory RequestDisk WMAgent_RequestName CRAB_ReqName |sort |uniq -c |sort -nr>>$OUTDIR/globalpool_jobs_info_new.txt
+echo "## RUNNING JOBS info updated at" $now >$OUTDIR/globalpool_all_running_jobs_new.txt
+echo "## number_jobs RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName">>$OUTDIR/globalpool_all_running_jobs_new.txt
+echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_all_running_jobs_new.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 2)' -af RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName |sort |uniq -c |sort -nr>>$OUTDIR/globalpool_all_running_jobs_new.txt
 
-echo "## QUEUED JOBS:">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## number_jobs RequestCPUs RequestMemory RequestDisk WMAgent_RequestName CRAB_ReqName">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
-condor_q -pool $collector -global -constraint '(JobStatus == 1)' -af RequestCPUs RequestMemory RequestDisk WMAgent_RequestName CRAB_ReqName |sort |uniq -c |sort -nr>>$OUTDIR/globalpool_jobs_info_new.txt
+mv $OUTDIR/globalpool_all_running_jobs_new.txt $OUTDIR/globalpool_all_running_jobs.txt
+cat $OUTDIR/globalpool_all_running_jobs.txt >> $OUTDIR/globalpool_jobs_info_new.txt
+
+echo "## QUEUED JOBS info updated at" $now >$OUTDIR/globalpool_all_queued_jobs_new.txt
+echo "## number_jobs RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName">>$OUTDIR/globalpool_all_queued_jobs_new.txt
+echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_all_queued_jobs_new.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 1)' -af RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName |sort |uniq -c |sort -nr>>$OUTDIR/globalpool_all_queued_jobs_new.txt
+
+mv $OUTDIR/globalpool_all_queued_jobs_new.txt $OUTDIR/globalpool_all_queued_jobs.txt
+cat $OUTDIR/globalpool_all_queued_jobs.txt >> $OUTDIR/globalpool_jobs_info_new.txt
 
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
 echo "## RUNNING JOBS EXCEEDING MEMORY REQUEST:">>$OUTDIR/globalpool_jobs_info_new.txt
@@ -49,14 +55,14 @@ echo "## -----------------------------------------------------------------------
 condor_q -pool cmsgwms-collector-global.cern.ch -global -constraint '(JobStatus == 2) && (RemoteWallClockTime>1800) && (RemoteUserCpu/(RequestCPUs*RemoteWallClockTime)<0.1)' -af 'RemoteUserCpu/(RequestCPUs*RemoteWallClockTime)' RequestCPUs WMAgent_RequestName CRAB_ReqName |sort -nr >>$OUTDIR/globalpool_jobs_info_new.txt
 
 #HELD JOBS and COMPLETED JOBS for longer than 3 days?
-n_completed=$(date_s=`date -u +%s`; condor_q -pool cmsgwms-collector-global.cern.ch -global -constraint '(JobStatus == 4) && ('${date_s}'-EnteredCurrentStatus>259200)' -af WMAgent_RequestName CRAB_ReqName |sort |wc -l)
+#n_completed=$(date_s=`date -u +%s`; condor_q -pool cmsgwms-collector-global.cern.ch -global -constraint '(JobStatus == 4) && ('${date_s}'-EnteredCurrentStatus>259200)' -af WMAgent_RequestName CRAB_ReqName |sort |wc -l)
 
-n_held=$(date_s=`date -u +%s`; condor_q -pool cmsgwms-collector-global.cern.ch -global -constraint '(JobStatus == 5) && ('${date_s}'-EnteredCurrentStatus>259200)' -af WMAgent_RequestName CRAB_ReqName |sort |wc -l)
+#n_held=$(date_s=`date -u +%s`; condor_q -pool cmsgwms-collector-global.cern.ch -global -constraint '(JobStatus == 5) && ('${date_s}'-EnteredCurrentStatus>259200)' -af WMAgent_RequestName CRAB_ReqName |sort |wc -l)
 
-echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## FOUND "$n_completed" COMPLETED JOBS IN SCHEDDS after 3 DAYS ">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## FOUND "$n_held" HELD JOBS IN SCHEDDS after 3 DAYS ">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
+#echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
+#echo "## FOUND "$n_completed" COMPLETED JOBS IN SCHEDDS after 3 DAYS ">>$OUTDIR/globalpool_jobs_info_new.txt
+#echo "## FOUND "$n_held" HELD JOBS IN SCHEDDS after 3 DAYS ">>$OUTDIR/globalpool_jobs_info_new.txt
+#echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
 
 mv $OUTDIR/globalpool_jobs_info_new.txt $OUTDIR/globalpool_jobs_info.txt
 
