@@ -15,3 +15,4 @@
 */20 * * * * /home/aperez/multi-core_global_status.sh >/dev/null 2>&1
 # Job resource and usage watchdog
 */20 * * * * /home/aperez/get_jobs_in_pool_resource_usage.sh >/dev/null 2>&1
+*/20 * * * * /home/aperez/get_jobs_in_pool_resizable.sh >/dev/null 2>&1
