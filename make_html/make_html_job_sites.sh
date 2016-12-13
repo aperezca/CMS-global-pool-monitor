@@ -6,7 +6,7 @@ if [[ $int -gt "168" ]]; then  #put plots longer than one week at another locati
 else
 	long=""
 fi
-
+# Range of sites to plot
 list=$2
 
 OUT="/crabprod/CSstoragePath/aperez/HTML/JobInfo/"$long"jobstatus_"$list"_"$int"h.html"

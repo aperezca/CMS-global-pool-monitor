@@ -7,7 +7,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/"$long"multicore_usage_t1s_"$int"h.html"
+OUT="/crabprod/CSstoragePath/aperez/HTML/T1s/"$long"multicore_usage_t1s_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS multicore pilots core usage monitor</title>
@@ -69,14 +69,14 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>MULTICORE PILOT USAGE OF CPU CORES AT CMS T1s for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_occupancy_t1s_'$int'h.html">(OCCUPANCY)</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_factory_t1s_'$int'h.html">(FACTORY STATUS)</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_frontend_t1s_'$int'h.html">(FRONT-END)</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_occupancy_t1s_'$int'h.html">(OCCUPANCY)</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_factory_t1s_'$int'h.html">(FACTORY STATUS)</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_frontend_t1s_'$int'h.html">(FRONT-END)</a>
 	</h2>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_usage_t1s_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_usage_t1s_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longmulticore_usage_t1s_720h.html">1month</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_usage_t1s_24h.html">24h</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_usage_t1s_168h.html">1week</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/longmulticore_usage_t1s_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 

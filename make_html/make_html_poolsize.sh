@@ -340,10 +340,10 @@ p {text-align: center;
 	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=vocms032.cern.ch&r=hour&z=small&jr=&js=&st=1461321500&event=hide&ts=0&v=8806&m=AutoClusters%20in%20Pool&vl=autoclusters&z=large" target="blank"> CM at CERN</a>
 	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=cmssrv221.fnal.gov&r=hour&z=small&jr=&js=&st=1479854807&event=hide&ts=0&v=18043&m=AutoClusters%20in%20Pool&vl=autoclusters&z=large" target="blank"> CM at FNAL</a>	
 
-	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_usage_t1s_24h.html" target="blank">T1 mcore pilots</a> and
+	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_usage_t1s_24h.html" target="blank">T1 mcore pilots</a> and
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_T1_24h.html" target="blank"> jobs</a>
 
-	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/T2s/multicore_usage_t2s_24h.html" target="blank">T2 mcore pilots</a> and
+	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/multicore_usage_t2s_24h.html" target="blank">T2 mcore pilots</a> and
         <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_T2_24h.html" target="blank"> jobs</a>
 
 	</h2>
