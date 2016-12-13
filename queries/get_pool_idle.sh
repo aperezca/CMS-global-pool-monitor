@@ -49,6 +49,7 @@ echo "## -----------------------------------------------------------------------
 cat /home/aperez/status/cores_retiring_glideins.txt                                 >>$OUTDIR/globalpool_pilot_info.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_pilot_info.txt
 
+#----------------------------------------------
 #Current fragmentation of the pool: only claimed slots
 date_s=`date -u +%s`
 cat /home/aperez/status/cores_fresh_glideins.txt |grep Claimed > /home/aperez/status/claimed_fresh_glideins.txt
