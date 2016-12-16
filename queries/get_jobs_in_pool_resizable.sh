@@ -32,5 +32,5 @@ while read -r line; do
 	fi
 done<$OUTDIR/globalpool_resizable_jobs_new.txt
 
-echo $date_s $jobs_1 $jobs_2 $jobs_3 $jobs_4 >>/home/aperez/out/resizable_1_4_jobs
-echo $date_s $jobcores_1 $jobcores_2 $jobcores_3 $jobcores_4 >>/home/aperez/out/resizable_1_4_jobcores
+echo $date_s $jobs_1 $jobs_2 $jobs_3 $jobs_4 >>/crabprod/CSstoragePath/aperez/out/resizable_1_4_jobs
+echo $date_s $jobcores_1 $jobcores_2 $jobcores_3 $jobcores_4 >>/crabprod/CSstoragePath/aperez/out/resizable_1_4_jobcores

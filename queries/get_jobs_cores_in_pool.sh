@@ -43,6 +43,6 @@ echo $jobcores_run_prod $jobcores_idle_prod
 echo $jobcores_run_crab $jobcores_idle_crab
 
 date_all=`date -u +%s`
-echo $date_all $total_jobcores_run $total_jobcores_idle >>/home/aperez/out/jobcores_size
-echo $date_all $jobcores_run_prod $jobcores_idle_prod >>/home/aperez/out/jobcores_size_prod
-echo $date_all $jobcores_run_crab $jobcores_idle_crab >>/home/aperez/out/jobcores_size_crab
+echo $date_all $total_jobcores_run $total_jobcores_idle >>/crabprod/CSstoragePath/aperez/out/jobcores_size
+echo $date_all $jobcores_run_prod $jobcores_idle_prod >>/crabprod/CSstoragePath/aperez/out/jobcores_size_prod
+echo $date_all $jobcores_run_crab $jobcores_idle_crab >>/crabprod/CSstoragePath/aperez/out/jobcores_size_crab

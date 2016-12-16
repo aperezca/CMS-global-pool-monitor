@@ -27,7 +27,7 @@ done</home/aperez/status/all_static_glideins.txt
 echo $size_stat_T2s $size_stat_T3s
 
 date_all=`date -u +%s`
-echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>/home/aperez/out/pool_size
+echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>/crabprod/CSstoragePath/aperez/out/pool_size
 
 now=$(date -u)
 OUT="/crabprod/CSstoragePath/aperez/HTML/globalpool_mcore_pilots_info.txt"

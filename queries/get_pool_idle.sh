@@ -26,7 +26,7 @@ done</home/aperez/status/cores_all_glideins.txt
 #echo $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_score_idle
 
 date_all=`date -u +%s`
-echo $date_all $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_score_idle >>/home/aperez/out/pool_idle
+echo $date_all $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_score_idle >>/crabprod/CSstoragePath/aperez/out/pool_idle
 
 #------------------------------------------
 #A more detailed view of currently running pilot pool:
@@ -69,6 +69,6 @@ while read -r line; do
         let slots_drain_$cores+=$(echo $line |awk '{print $1*$3}')
 done</home/aperez/status/claimed_retiring_glideins.txt
 
-echo $date_s $slots_fresh_1 $slots_fresh_2 $slots_fresh_3 $slots_fresh_4 $slots_fresh_5 $slots_fresh_6 $slots_fresh_7 $slots_fresh_8 >>/home/aperez/out/pool_partition_fresh
-echo $date_s $slots_drain_1 $slots_drain_2 $slots_drain_3 $slots_drain_4 $slots_drain_5 $slots_drain_6 $slots_drain_7 $slots_drain_8 >>/home/aperez/out/pool_partition_drain
+echo $date_s $slots_fresh_1 $slots_fresh_2 $slots_fresh_3 $slots_fresh_4 $slots_fresh_5 $slots_fresh_6 $slots_fresh_7 $slots_fresh_8 >>/crabprod/CSstoragePath/aperez/out/pool_partition_fresh
+echo $date_s $slots_drain_1 $slots_drain_2 $slots_drain_3 $slots_drain_4 $slots_drain_5 $slots_drain_6 $slots_drain_7 $slots_drain_8 >>/crabprod/CSstoragePath/aperez/out/pool_partition_drain
 

@@ -1,7 +1,12 @@
 # Monitor pilots and jobs in the global pool in general
-*/10 * * * * /home/aperez/run_monitor.sh >/dev/null 2>&1
-*/20 * * * * /home/aperez/run_monitor_html.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_pool.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_t1s.sh >/dev/null 2>&1
 */10 * * * * /home/aperez/run_monitor_t2s.sh >/dev/null 2>&1
+#---------------
+*/20 * * * * /home/aperez/run_monitor_html_pool.sh >/dev/null 2>&1
+*/20 * * * * /home/aperez/run_monitor_html_t1s.sh >/dev/null 2>&1
+*/20 * * * * /home/aperez/run_monitor_html_t2s.sh >/dev/null 2>&1
+#---------------
 */10 * * * * /home/aperez/run_monitor_t0.sh >/dev/null 2>&1
 */10 * * * * /home/aperez/run_monitor_ucsd.sh >/dev/null 2>&1
 */10 * * * * /home/aperez/run_monitor_jobs.sh >/dev/null 2>&1

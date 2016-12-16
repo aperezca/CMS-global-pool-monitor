@@ -38,10 +38,10 @@ while read -r line; do
 	fi
 done<$OUTDIR/globalpool_running_jobs_new.txt
 
-echo $date_all $global_running_prod $global_running_crab >>/home/aperez/out/jobs_running_global
+echo $date_all $global_running_prod $global_running_crab >>/crabprod/CSstoragePath/aperez/out/jobs_running_global
 #echo $T1_prod $T1_crab $T2_prod $T2_crab
-echo $date_all $T1_prod $T1_crab >>/home/aperez/out/jobs_running_AllT1s
-echo $date_all $T2_prod $T2_crab >>/home/aperez/out/jobs_running_AllT2s
+echo $date_all $T1_prod $T1_crab >>/crabprod/CSstoragePath/aperez/out/jobs_running_AllT1s
+echo $date_all $T2_prod $T2_crab >>/crabprod/CSstoragePath/aperez/out/jobs_running_AllT2s
 
 #----- Per site info for those running mcore
 echo "getting per site numbers"
@@ -61,7 +61,7 @@ for list in T1 T2 T0; do
 			if [[ $crab_name != "undefined" ]]; then let running_crab+=$(echo $line |awk '{print $1*$5}'); fi
 		done<$OUTDIR/running_jobs_$site.txt
 		#echo $date_all $running_prod $running_crab
-		echo $date_all $running_prod $running_crab >>/home/aperez/out/jobs_running_$site
+		echo $date_all $running_prod $running_crab >>/crabprod/CSstoragePath/aperez/out/jobs_running_$site
 	done
 done
 #----------------------------------------

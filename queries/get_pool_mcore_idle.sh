@@ -51,4 +51,4 @@ done</home/aperez/status/mcore_idle_usable.txt
 
 #echo "Total:"
 #echo $date_s $n_retire $n_memory $n_usable_unclaimed $n_usable_claimed
-echo $date_s $n_retire $n_memory $n_usable_unclaimed $n_usable_claimed >>/home/aperez/out/pool_mcoreidle
+echo $date_s $n_retire $n_memory $n_usable_unclaimed $n_usable_claimed >>/crabprod/CSstoragePath/aperez/out/pool_mcoreidle

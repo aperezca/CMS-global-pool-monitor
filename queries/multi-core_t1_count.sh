@@ -50,7 +50,7 @@ for site in `cat /home/aperez/entries/T1_sites`; do
 	let n_cores_tot=$n_cores_busy+$n_cores_idle+$cores_in_child_preempting
 
 	echo $site 'pilots:' $n_pilots 'total cores:' $n_cores $n_cores_tot 'in parent:' $cores_in_parent 'busy:' $n_cores_busy 'idle:' $n_cores_idle 'preempting' $cores_in_child_preempting
-	echo $date $n_pilots $n_cores $n_cores_tot $n_cores_busy $n_cores_idle $cores_in_child_preempting >>/home/aperez/out/count_$site
+	echo $date $n_pilots $n_cores $n_cores_tot $n_cores_busy $n_cores_idle $cores_in_child_preempting >>/crabprod/CSstoragePath/aperez/out/count_$site
 
 	let n_pilots_all+=$n_pilots
 	let n_cores_all+=$n_cores
@@ -67,16 +67,16 @@ for site in `cat /home/aperez/entries/T1_sites`; do
 		num=$(cat /home/aperez/status/glideins_$site| grep Partitionable |awk '{print $2 $3 $4}' |grep $line| wc -l);
 		let pilot_$used_cores=$num; done
 		#let pilot_$i=$(cat glideins_$site| grep Partitionable |awk '{print $3}' |grep $used_cores| wc -l); done
-	        echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 $pilot_9 $pilot_10 >>/home/aperez/out/occup_$site
+	        echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 $pilot_9 $pilot_10 >>/crabprod/CSstoragePath/aperez/out/occup_$site
 	else	
 		for i in {0..8}; do 
 		let used_cores=8-$i
 		let pilot_$used_cores=$(cat /home/aperez/status/glideins_$site| grep Partitionable |awk '{print $3}' |grep $i| wc -l); done
-		echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 >>/home/aperez/out/occup_$site
+		echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 >>/crabprod/CSstoragePath/aperez/out/occup_$site
 	fi
 
 	#rm glideins_$site 
 done
 date_all=`date -u +%s`
-echo $date_all $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all >>/home/aperez/out/count_All_T1s
+echo $date_all $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all >>/crabprod/CSstoragePath/aperez/out/count_All_T1s
 

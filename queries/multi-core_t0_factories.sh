@@ -26,6 +26,6 @@ for site in `cat /home/aperez/entries/T0_sites`; do
                 	let held_g+=$held
 		done
 	done
-	echo $date $idle_g $running_g $held_g >>/home/aperez/out/factories_$site
+	echo $date $idle_g $running_g $held_g >>/crabprod/CSstoragePath/aperez/out/factories_$site
 	#echo $date $idle_g $running_g $held_g
 done

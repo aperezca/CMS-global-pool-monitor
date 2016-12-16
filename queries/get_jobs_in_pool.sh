@@ -38,11 +38,11 @@ done
 
 
 date_all=`date -u +%s`
-echo $date_all $total_jobs_run $total_jobs_idle $total_jobs_held >>/home/aperez/out/jobs_size
+echo $date_all $total_jobs_run $total_jobs_idle $total_jobs_held >>/crabprod/CSstoragePath/aperez/out/jobs_size
 
-echo $date_all $jobs_run_prod $jobs_idle_prod $jobs_held_prod >>/home/aperez/out/jobs_size_prod
-echo $date_all $jobs_run_crab $jobs_idle_crab $jobs_held_crab >>/home/aperez/out/jobs_size_crab
-echo $date_all $jobs_run_other $jobs_idle_other $jobs_held_other >>/home/aperez/out/jobs_size_other
+echo $date_all $jobs_run_prod $jobs_idle_prod $jobs_held_prod >>/crabprod/CSstoragePath/aperez/out/jobs_size_prod
+echo $date_all $jobs_run_crab $jobs_idle_crab $jobs_held_crab >>/crabprod/CSstoragePath/aperez/out/jobs_size_crab
+echo $date_all $jobs_run_other $jobs_idle_other $jobs_held_other >>/crabprod/CSstoragePath/aperez/out/jobs_size_other
 
-echo $date_all $autoclusters_prod $autoclusters_crab $autoclusters_other >>/home/aperez/out/autoclusters
+echo $date_all $autoclusters_prod $autoclusters_crab $autoclusters_other >>/crabprod/CSstoragePath/aperez/out/autoclusters
 

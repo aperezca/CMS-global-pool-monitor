@@ -15,4 +15,4 @@ done
 echo $pilot_cores $job_cores
 
 date_all=`date -u +%s`
-echo $date_all $pilot_cores $job_cores  >>/home/aperez/out/ucsd_pool_size
+echo $date_all $pilot_cores $job_cores  >>/crabprod/CSstoragePath/aperez/out/ucsd_pool_size

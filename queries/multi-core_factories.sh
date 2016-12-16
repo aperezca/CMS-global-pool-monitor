@@ -38,6 +38,6 @@ for site in `cat $sitelist`; do
                 	if [[ $held != "" ]]; then let held_g+=$held; fi
 		done
 	done
-	echo $date $idle_g $running_g $held_g >>/home/aperez/out/factories_$site
+	echo $date $idle_g $running_g $held_g >>/crabprod/CSstoragePath/aperez/out/factories_$site
 	#echo $date $idle_g $running_g $held_g
 done
