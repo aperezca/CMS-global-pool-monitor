@@ -34,7 +34,7 @@ data_fresh.addColumn('number', 'slots_7_cores');
 data_fresh.addColumn('number', 'slots_8_cores');
 
 data_fresh.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_partition_fresh >/home/aperez/status/input_part_fresh$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_partition_fresh >/home/aperez/status/input_part_fresh$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
@@ -73,7 +73,7 @@ data_retire.addColumn('number', 'slots_7_cores');
 data_retire.addColumn('number', 'slots_8_cores');
 
 data_retire.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_partition_drain >/home/aperez/status/input_part_retire$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_partition_drain >/home/aperez/status/input_part_retire$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time

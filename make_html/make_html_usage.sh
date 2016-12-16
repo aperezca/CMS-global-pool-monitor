@@ -27,7 +27,7 @@ for site in `echo "All_T1s"; cat /home/aperez/entries/T1_sites`; do
       	data_$site.addColumn('number', 'Busy cores'); 
 	data_$site.addColumn('number', 'Idle cores');
 	data_$site.addRows([">>$OUT
-	tail -n $n_lines /home/aperez/out/count_$site >/home/aperez/status/input_file_use_$site$int
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/count_$site >/home/aperez/status/input_file_use_$site$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time

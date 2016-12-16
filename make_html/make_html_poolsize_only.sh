@@ -30,7 +30,7 @@ data_pool.addColumn('number', 'T2 score');
 data_pool.addColumn('number', 'T3 score');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time

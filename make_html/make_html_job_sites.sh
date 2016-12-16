@@ -29,7 +29,7 @@ for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
       	data_$site.addColumn('number', 'production'); 
 	data_$site.addColumn('number', 'analysis');
 	data_$site.addRows([">>$OUT
-	tail -n $n_lines /home/aperez/out/jobs_running_$site >/home/aperez/status/jobs_$site$long
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_$site >/home/aperez/status/jobs_$site$long
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time

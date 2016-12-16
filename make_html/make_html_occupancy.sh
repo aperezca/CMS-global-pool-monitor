@@ -41,7 +41,7 @@ for site in `cat /home/aperez/entries/T1_sites`; do
 	
 	echo "data_$site.addRows([">>$OUT
 
-	tail -n $n_lines /home/aperez/out/occup_$site > /home/aperez/status/input_file_occ_$site$int
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/occup_$site > /home/aperez/status/input_file_occ_$site$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time

@@ -30,7 +30,7 @@ data_pool.addColumn('number', 'T2 score');
 data_pool.addColumn('number', 'T3 score');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
@@ -64,7 +64,7 @@ data_poolidle.addColumn('number', 'mcore idle');
 data_poolidle.addColumn('number', 'score idle');
 
 data_poolidle.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -97,7 +97,7 @@ data_mcoreidle.addColumn('number', 'mcore memory');
 data_mcoreidle.addColumn('number', 'mcore usable');
 
 data_mcoreidle.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_mcoreidle >/home/aperez/status/input_pool_mcoreidle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_mcoreidle >/home/aperez/status/input_pool_mcoreidle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time

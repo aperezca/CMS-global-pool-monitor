@@ -7,7 +7,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/"$long"global_pool_size_"$int"h.html"
+OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"global_pool_size_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS global pool running glideins monitor</title>
@@ -30,7 +30,7 @@ data_pool.addColumn('number', 'T2 score');
 data_pool.addColumn('number', 'T3 score');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
@@ -64,7 +64,7 @@ data_poolidle.addColumn('number', 'mcore idle');
 data_poolidle.addColumn('number', 'score idle');
 
 data_poolidle.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -97,7 +97,7 @@ data_pooleff.addColumn('number', 'score occupation');
 data_pooleff.addColumn('number', 'pool occupation');
 
 data_pooleff.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -136,7 +136,7 @@ data_mcoreidle.addColumn('number', 'idle unclaimed');
 data_mcoreidle.addColumn('number', 'idle claimed');
 
 data_mcoreidle.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/pool_mcoreidle >/home/aperez/status/input_pool_mcoreidle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_mcoreidle >/home/aperez/status/input_pool_mcoreidle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -175,7 +175,7 @@ data_FE.addColumn('number', 'T2_main_score');
 data_FE.addColumn('number', 'T3_main_score');
 
 data_FE.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/frontend_full >/home/aperez/status/input_FE_full$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/frontend_full >/home/aperez/status/input_FE_full$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -211,7 +211,7 @@ data_jobs.addColumn('number', 'Prod jobs');
 data_jobs.addColumn('number', 'Analysis jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/jobs_running_global >/home/aperez/status/input_jobs_running_global$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_global >/home/aperez/status/input_jobs_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -243,7 +243,7 @@ data_jobcores.addColumn('number', 'Cores runing jobs');
 data_jobcores.addColumn('number', 'Cores idle jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/jobcores_size >/home/aperez/status/input_jobcores_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size >/home/aperez/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -276,7 +276,7 @@ data_clusters.addColumn('number', 'Autoclusters crab');
 data_clusters.addColumn('number', 'Autoclusters other');
 
 data_clusters.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/autoclusters >/home/aperez/status/input_autoclusters$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters >/home/aperez/status/input_autoclusters$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time

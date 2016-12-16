@@ -31,7 +31,7 @@ for i in jobs jobcores; do
 	data_$i.addColumn('number', '${i}_4');
 
 	data_$i.addRows([">>$OUT
-	tail -n $n_lines /home/aperez/out/resizable_1_4_$i >/home/aperez/status/input_resizable_1_4_${i}_$int
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/resizable_1_4_$i >/home/aperez/status/input_resizable_1_4_${i}_$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time

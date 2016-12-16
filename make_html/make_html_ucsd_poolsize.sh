@@ -28,7 +28,7 @@ data_pool.addColumn('number', 'pilot cores');
 data_pool.addColumn('number', 'job cores');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /home/aperez/out/ucsd_pool_size >/home/aperez/status/input_ucsd_pool_size
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/ucsd_pool_size >/home/aperez/status/input_ucsd_pool_size
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
