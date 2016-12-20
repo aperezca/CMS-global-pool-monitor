@@ -9,7 +9,7 @@ collector=$(/home/aperez/collector.sh)
 OUTDIR="/crabprod/CSstoragePath/aperez/HTML/JobInfo"
 now=$(date -u)
 
-condor_q -pool cmssrv221.fnal.gov -global -const '(WMCore_ResizeJob=?=true) && (JobStatus==2)' -af WMAgent_RequestName RequestCPUs JobCpus OriginalCpus MinCores MaxCores |sort |uniq -c >$OUTDIR/globalpool_resizable_jobs_new.txt
+condor_q -pool $collector -global -const '(WMCore_ResizeJob=?=true) && (JobStatus==2)' -af WMAgent_RequestName RequestCPUs JobCpus OriginalCpus MinCores MaxCores |sort |uniq -c >$OUTDIR/globalpool_resizable_jobs_new.txt
 
 echo "## RESIZABLE JOBS RUNNING IN CMS GLOBAL POOL UPDATED AT" $now                                   >$OUTDIR/globalpool_resizable_jobs.txt
 echo "## Number_jobs :: WMAgent_RequestName RequestCPUs JobCpus OriginalCpus MinCores MaxCores"      >>$OUTDIR/globalpool_resizable_jobs.txt

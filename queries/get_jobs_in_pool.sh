@@ -46,3 +46,8 @@ echo $date_all $jobs_run_other $jobs_idle_other $jobs_held_other >>/crabprod/CSs
 
 echo $date_all $autoclusters_prod $autoclusters_crab $autoclusters_other >>/crabprod/CSstoragePath/aperez/out/autoclusters
 
+# count also number of autoclusters from queued jobs:
+autoclusters_prod_queued=$(cat /crabprod/CSstoragePath/aperez/HTML/JobInfo/globalpool_all_queued_jobs.txt |awk '{print $6, $8}' | grep -v undefined| sort |uniq |wc -l)
+autoclusters_crab_queued=$(cat /crabprod/CSstoragePath/aperez/HTML/JobInfo/globalpool_all_queued_jobs.txt |awk '{print $7, $8}' | grep -v undefined| sort |uniq |wc -l)
+
+echo $date_all $autoclusters_prod_queued $autoclusters_crab_queued >>/crabprod/CSstoragePath/aperez/out/autoclusters_queued
