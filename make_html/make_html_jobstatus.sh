@@ -118,6 +118,38 @@ var chart_clusters = new google.visualization.AreaChart(document.getElementById(
 chart_clusters.draw(data_clusters, options_clusters);">>$OUT
 
 #----------
+# Autoclusters in queued jobs in pool
+echo "var data_clusters_q = new google.visualization.DataTable();
+data_clusters_q.addColumn('datetime', 'Date');
+data_clusters_q.addColumn('number', 'Autoclusters prod');
+data_clusters_q.addColumn('number', 'Autoclusters crab');
+
+data_clusters_q.addRows([">>$OUT
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters_queued >/home/aperez/status/input_autoclusters_q$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2", "$3}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done </home/aperez/status/input_autoclusters_q$int
+stats_clusters_q=$(python /home/aperez/get_averages.py /home/aperez/status/input_autoclusters_q$int)
+rm /home/aperez/status/input_autoclusters_q$int
+
+echo "      ]);
+var options_clusters_q = {
+        title: 'Global pool idle job autoclusters',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0000FF', '#0060FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of job clusters in pool schedds'}
+        };
+
+var chart_clusters_q = new google.visualization.AreaChart(document.getElementById('chart_div_clusters_q'));
+chart_clusters_q.draw(data_clusters_q, options_clusters_q);">>$OUT
+
+#---------------------
 # Prod jobs in pool:
 echo "var data_jobs_prod = new google.visualization.DataTable();
 data_jobs_prod.addColumn('datetime', 'Date');
@@ -308,6 +340,7 @@ p {text-align: center;
 echo ' <div id="chart_div_jobs"></div><p>'$(echo "[avg, min, max]: " $stats_jobs)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobcores"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_clusters"></div><p>'$(echo "[avg, min, max]: " $stats_clusters)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_clusters_q"></div><p>'$(echo "[avg, min, max]: " $stats_clusters_q)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobs_prod"></div><p>'$(echo "[avg, min, max]: " $stats_jobs_prod)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobcores_prod"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores_prod)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobs_crab"></div><p>'$(echo "[avg, min, max]: " $stats_jobs_crab)'</p><br><br>'>>$OUT
