@@ -315,6 +315,39 @@ chart_jobs_other.draw(data_jobs_other, options_jobs_other);">>$OUT
 
 #---------------
 
+# Other jobs cores in pool:
+echo "var data_jobcores_other = new google.visualization.DataTable();
+data_jobcores_other.addColumn('datetime', 'Date');
+data_jobcores_other.addColumn('number', 'Cores running jobs');
+data_jobcores_other.addColumn('number', 'Cores queued jobs');
+
+data_jobcores_other.addRows([">>$OUT
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_other >/home/aperez/status/input_jobcores_size_other$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2", "$3}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done </home/aperez/status/input_jobcores_size_other$int
+stats_jobcores_other=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size_other$int)
+rm /home/aperez/status/input_jobcores_size_other$int
+
+echo "      ]);
+var options_jobcores_other = {
+        title: 'Global pool cores in other (not prod or crab3) job numbers',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0040FF', '#FFBF00'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of cores'}
+        };
+
+var chart_jobcores_other = new google.visualization.AreaChart(document.getElementById('chart_div_jobcores_other'));
+chart_jobcores_other.draw(data_jobcores_other, options_jobcores_other);">>$OUT
+
+#---------------
+
 echo '
     }
 
@@ -346,6 +379,7 @@ echo ' <div id="chart_div_jobcores_prod"></div><p>'$(echo "[avg, min, max]: " $s
 echo ' <div id="chart_div_jobs_crab"></div><p>'$(echo "[avg, min, max]: " $stats_jobs_crab)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobcores_crab"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores_crab)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobs_other"></div><p>'$(echo "[avg, min, max]: " $stats_jobs_other)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_jobcores_other"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores_other)'</p><br><br>'>>$OUT
 echo "
 </body>
 </html>" >>$OUT

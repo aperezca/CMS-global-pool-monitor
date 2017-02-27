@@ -54,6 +54,7 @@ for site in `cat /home/aperez/entries/T1_sites`; do
 			content=$(echo $line|awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10}')
 			echo "[new Date($timemil), $content], " >>$OUT
 		fi
+		#echo $content
 	done  </home/aperez/status/input_file_occ_$site$int
 	rm /home/aperez/status/input_file_occ_$site$int
 
