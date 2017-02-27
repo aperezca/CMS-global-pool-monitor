@@ -5,52 +5,37 @@ import sys, commands
 try:
 	file_name=sys.argv[1]
 except:
-	print "arg 1= file, arg 2 = mode, arg 3 = start date, arg 4 = end date. Dates in mm/dd/yyyy format"
+	print "arg 1= file, arg 2= start date, arg 3 = end date. Dates in mm/dd/yyyy format"
 #comm="date -u -d @"+str(date_min)
 
 try:
-	mode=sys.argv[2]
-	#print "selected", mode, "mode"
-	#if mode is not "time" and mode is not "histo": print "specify mode: histo or time series"
+	date_min=sys.argv[2]
+	comm="date -d "+str(date_min)+" -u +%s"
+	#print "from ",date_min
+	date_min_s=int(commands.getoutput(comm))
 except:
-	#print "will try as time series"
-	mode="time"
-mode="time"
+	date_min_s=0
 
-if mode=="time":
-	try:
-		date_min=sys.argv[3]
-		comm="date -d "+str(date_min)+" -u +%s"
-		#print "from ",date_min
-		date_min_s=int(commands.getoutput(comm))
-	except:
-		date_min_s=0
-
-	try:
-		date_max=sys.argv[4]
-		comm="date -d "+str(date_max)+" -u +%s"
-        	#print "to ", date_max
-		date_max_s=int(commands.getoutput(comm))
-	except:
-		date_max_s=9999999999
+try:
+	date_max=sys.argv[3]
+	comm="date -d "+str(date_max)+" -u +%s"
+        #print "to ", date_max
+	date_max_s=int(commands.getoutput(comm))
+except:
+	date_max_s=9999999999
 	
-#	try:
-#		print "get entries from from",date_min,"to",date_max
-#		print 'dates for interval in seconds:', date_min_s, date_max_s
-#	except:
-#		print "arg 1= file, arg 2 = mode, arg 3 = start date, arg 4 = end date. Dates in mm/dd/yyyy format"
+#print "from ", date_min, "to ", date_max
 
 f = open(file_name, 'r')
 my_lines=[]
 
-# Filter entries by the first field which is timestamp in time series mode
+# Filter entries by the first field which is timestamp 
 for rline in f.readlines():
 	line = rline.split('\n')[0].split(' ')
 	#print line
-	if mode=="histo": my_lines.append(line)
-	if mode=="time":
-		if int(line[0])>date_min_s and int(line[0])<date_max_s: my_lines.append(line)
-		else: continue
+	if int(line[0])>date_min_s and int(line[0])<date_max_s: my_lines.append(line)
+	else: continue
+#print "found", len(my_lines), "entries"
 
 # Transpose lines into columns:
 columns = {}
@@ -79,10 +64,9 @@ results=[]
 # Get only average:
 for i in range(dim): results.append(float(sum(columns[i])/entries))
 
-if mode=="time":
-	print results
-	#print results[2], float(results[4]/results[2])
-	#for i in range(dim-1): print results[i+1]
-else: 
-	for i in range(dim): print results[i]
+print results
+#print results[2], float(results[4]/results[2])
+#print results[2]
+#print float(results[4]/results[2])
+#for i in range(dim-1): print results[i+1]
 

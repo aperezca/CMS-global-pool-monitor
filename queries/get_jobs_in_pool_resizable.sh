@@ -3,8 +3,8 @@ source /etc/profile.d/condor.sh
 
 # Watch resizable jobs in CMS global pool
 # Antonio Perez-Calero Yzquierdo Nov  2016
-
-collector=$(/home/aperez/collector.sh)
+# Feb 2017 query child collector
+collector=$(/home/aperez/collector.sh):9620
 
 OUTDIR="/crabprod/CSstoragePath/aperez/HTML/JobInfo"
 now=$(date -u)

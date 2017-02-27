@@ -3,8 +3,8 @@ source /etc/profile.d/condor.sh
 
 # Watch number and type of jobs in CMS global pool
 # Antonio Perez-Calero Yzquierdo Apr, Jun,  2016
-
-collector=$(/home/aperez/collector.sh)
+# Feb 2017, query child collector
+collector=$(/home/aperez/collector.sh):9620
 
 condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters| sort >/home/aperez/status/all_jobs.txt
 

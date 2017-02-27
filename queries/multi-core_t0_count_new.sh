@@ -11,37 +11,33 @@ source /etc/profile.d/condor.sh
 # child glideins: Dynamic, Claimed Busy OR Preempting Killing OR Unclaimed Idle
 # single core glideins: Static
 
-collector=$(/home/aperez/collector.sh)
+collector="cmsgwms-collector-tier0.cern.ch" # Main T0 collector used by CMS
+#collector="cmssrv239.fnal.gov" # Backup collector for T0 at FNAL
 
+#date=`date -u +%s`
 n_pilots_all=0
 n_cores_all=0
 n_cores_tot_all=0
 n_cores_busy_all=0
 n_cores_idle_all=0
 cores_in_child_preempting_all=0
-for site in `cat /home/aperez/entries/T1_sites`; do
+for site in `cat /home/aperez/entries/T0_sites`; do
 	date=`date -u +%s`
-	condor_status -pool $collector \
-	-const '(GLIDEIN_CMSSite=?="'$site'")' \
-	-format '%s ' Name \
-	-format '%s ' SlotType \
-	-format '%s\ ' CPUs \
-	-format '%s\ ' State \
-	-format '%s\n' Activity > /home/aperez/status/glideins_$site
+	condor_status -pool $collector -const '(GLIDEIN_CMSSite=?="'$site'")' -af SlotType TotalSlotCPUs CPUs State Activity IOSlots RepackSlots |sort |uniq -c > /home/aperez/status/glideins_$site
 
-	#PILOT and CORE counting: TODO > try to use TotalSlotCpus classad!!
+	#PILOT and CORE counting: try to use TotalSlotCpus classad!! AVOID IOslots and Repackslots
 	n_pilots=$(cat /home/aperez/status/glideins_$site| grep Partitionable |wc -l)
-	if [ $site == "T1_RU_JINR" ]; then cores_per_pilot=10;
-	else cores_per_pilot=8;
-	fi
+	#cores_per_pilot=8
+	cores_per_pilot=$(cat /home/aperez/status/glideins_$site| grep Partitionable |awk '{print $3}')
 	let n_cores=$cores_per_pilot*$n_pilots
 	
+	#TODO Remove ioslots and repack slots? Take into account machine draining for defragmentation
 	cores_in_parent=0
 	for i in `cat /home/aperez/status/glideins_$site |grep Partitionable |awk '{print $3}'`; do let cores_in_parent+=i; done
 	cores_in_child_busy=0
-	for i in `cat /home/aperez/status/glideins_$site |grep Dynamic |grep "Busy" | awk '{print $3}'`; do let cores_in_child_busy+=i; done
+	for i in `cat /home/aperez/status/glideins_$site |grep Dynamic |grep "Claimed Busy" | awk '{print $3}'`; do let cores_in_child_busy+=i; done
 	cores_in_child_idle=0
-        for i in `cat /home/aperez/status/glideins_$site |grep Dynamic |grep "Idle" | awk '{print $3}'`; do let cores_in_child_idle+=i; done
+        for i in `cat /home/aperez/status/glideins_$site |grep Dynamic |grep "Unclaimed Idle" | awk '{print $3}'`; do let cores_in_child_idle+=i; done
 	cores_in_child_preempting=0
         for i in `cat /home/aperez/status/glideins_$site |grep Dynamic |grep "Preempting Killing" | awk '{print $3}'`; do let cores_in_child_preempting+=i; done
 
@@ -60,23 +56,12 @@ for site in `cat /home/aperez/entries/T1_sites`; do
 	let cores_in_child_preempting_all+=$cores_in_child_preempting
 
 	#PILOT OCCUPANCY
-	if [ $site == "T1_RU_JINR" ]; then
-		for i in {0..10}; do
-		line='Partitionable'$i'Unclaimed' 
-		let used_cores=10-$i
-		num=$(cat /home/aperez/status/glideins_$site| grep Partitionable |awk '{print $2 $3 $4}' |grep $line| wc -l);
-		let pilot_$used_cores=$num; done
-		#let pilot_$i=$(cat glideins_$site| grep Partitionable |awk '{print $3}' |grep $used_cores| wc -l); done
-	        echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 $pilot_9 $pilot_10 >>/crabprod/CSstoragePath/aperez/out/occup_$site
-	else	
-		for i in {0..8}; do 
+	for i in {0..8}; do 
 		let used_cores=8-$i
-		let pilot_$used_cores=$(cat /home/aperez/status/glideins_$site| grep Partitionable |awk '{print $3}' |grep $i| wc -l); done
-		echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 >>/crabprod/CSstoragePath/aperez/out/occup_$site
-	fi
-
-	#rm glideins_$site 
+		let pilot_$used_cores=$(cat /home/aperez/status/glideins_$site| grep Partitionable |awk '{print $3}' |grep $i| wc -l); 
+	done
+	echo $date $pilot_0 $pilot_1 $pilot_2 $pilot_3 $pilot_4 $pilot_5 $pilot_6 $pilot_7 $pilot_8 >>/crabprod/CSstoragePath/aperez/out/occup_$site
 done
 date_all=`date -u +%s`
-echo $date_all $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all >>/crabprod/CSstoragePath/aperez/out/count_All_T1s
+echo $date_all $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all >>/crabprod/CSstoragePath/aperez/out/count_All_T0s
 
