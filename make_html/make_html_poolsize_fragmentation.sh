@@ -85,7 +85,7 @@ rm /home/aperez/status/input_part_retire$int
 
 echo "      ]);
 var options_retire = {
-        title: 'Cores in claimed dynamic slots by slot size for non-retiring glideins',
+        title: 'Cores in claimed dynamic slots by slot size for retiring glideins',
         isStacked: 'true',
         explorer: {},
         'height':500,

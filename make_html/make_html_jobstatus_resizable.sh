@@ -29,18 +29,24 @@ for i in jobs jobcores; do
 	data_$i.addColumn('number', '${i}_2');
 	data_$i.addColumn('number', '${i}_3');
 	data_$i.addColumn('number', '${i}_4');
+        data_$i.addColumn('number', '${i}_5');
+        data_$i.addColumn('number', '${i}_6');
+        data_$i.addColumn('number', '${i}_7');
+        data_$i.addColumn('number', '${i}_8');
+        data_$i.addColumn('number', '${i}_9');
+        data_$i.addColumn('number', '${i}_10');
 
 	data_$i.addRows([">>$OUT
-	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/resizable_1_4_$i >/home/aperez/status/input_resizable_1_4_${i}_$int
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/resizable_3_10_$i >/home/aperez/status/input_resizable_${i}_$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
-		content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
+		content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11}')
 		echo "[new Date($timemil), $content], " >>$OUT
-	done </home/aperez/status/input_resizable_1_4_${i}_$int
-	stats=$(python /home/aperez/get_averages.py /home/aperez/status/input_resizable_1_4_${i}_$int)
+	done </home/aperez/status/input_resizable_${i}_$int
+	stats=$(python /home/aperez/get_averages.py /home/aperez/status/input_resizable_${i}_$int)
 	declare "stats_$i=$(echo $stats)"
-	rm /home/aperez/status/input_resizable_1_4_${i}_$int
+	rm /home/aperez/status/input_resizable_${i}_$int
 
 	echo "      ]);
 	var options_$i = {
@@ -48,13 +54,13 @@ for i in jobs jobcores; do
 		explorer: {},
 		'height':500,
 		hAxis: {title: 'Time'},
-		colors: ['#FF0000', '#FF8000', '#FFBF00', '#FFFF00'],">>$OUT
+                colors: ['#FF0000', '#FF8000', '#FFBF00', '#FFFF00', '#80FF00', '#00FF00', '#00BFFF', '#0000FF', '#FF0000', '#FF8000'],">>$OUT
 		if [[ $i == 'jobs' ]]; then echo " 
-		title: 'Number of jobs as a function of cores for 1 to 4 resizable jobs',
+		title: 'Number of jobs as a function of cores for resizable jobs',
 		vAxis: {title: 'Number of jobs'}">>$OUT
 		fi
 		if [[ $i == 'jobcores' ]]; then echo "
-                title: 'Number of cores used by 1 to 4 resizable jobs',
+                title: 'Number of cores used by resizable jobs',
                 vAxis: {title: 'Number of cores'}">>$OUT
                 fi
 	echo "	};

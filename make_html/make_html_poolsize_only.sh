@@ -7,7 +7,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/"$long"global_pool_size_only_"$int"h.html"
+OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"global_pool_size_only_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS global pool running glideins monitor</title>
@@ -56,35 +56,40 @@ chart_pool.draw(data_pool, options_pool);">>$OUT
 
 #----------------------
 #Pool diff:
-echo "var data_diff = new google.visualization.DataTable();
-data_diff.addColumn('datetime', 'Date');
-data_diff.addColumn('number', 'cores finishing pilots');
-data_diff.addColumn('number', 'cores starting pilots');
+#echo "var data_diff = new google.visualization.DataTable();
+#data_diff.addColumn('datetime', 'Date');
+#data_diff.addColumn('number', 'cores finishing pilots');
+#data_diff.addColumn('number', 'cores starting pilots');
 
-data_diff.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_diff_total >/home/aperez/status/input_pool_diff$int
-while read -r line; do
-        time=$(echo $line |awk '{print $1}')
-        let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3}')
-        echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_pool_diff$int
-stats_diff=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_diff$int)
-rm /home/aperez/status/input_pool_diff$int
-
-echo "      ]);
-var options_diff = {
-        title: 'Global pool starting and finishing pilot cores',
-        isStacked: 'false',
-        explorer: {},
-        'height':500,
-        colors: ['#0000A0', '#52D017'],
-        hAxis: {title: 'Time'},
-        vAxis: {title: 'Number of cores'}
-        };
-
-var chart_diff = new google.visualization.AreaChart(document.getElementById('chart_div_diff'));
-chart_diff.draw(data_diff, options_diff);">>$OUT
+#echo "var data_diff = new google.visualization.DataTable();
+#data_diff.addColumn('datetime', 'Date');
+#data_diff.addColumn('number', 'cores starting-finishing pilots');
+#
+#data_diff.addRows([">>$OUT
+#tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_diff_total >/home/aperez/status/input_pool_diff$int
+#while read -r line; do
+#        time=$(echo $line |awk '{print $1}')
+#        let timemil=1000*$time
+#        #content=$(echo $line |awk '{print $2", "$3}')
+#	content=$(echo $line |awk '{print -$2+$3}')
+#        echo "[new Date($timemil), $content], " >>$OUT
+#done </home/aperez/status/input_pool_diff$int
+#stats_diff=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_diff$int)
+#rm /home/aperez/status/input_pool_diff$int
+#
+#echo "      ]);
+#var options_diff = {
+#        title: 'Global pool starting and finishing pilot cores',
+#        isStacked: 'true',
+#        explorer: {},
+#        'height':500,
+#        colors: ['#0000A0', '#52D017'],
+#        hAxis: {title: 'Time'},
+#        vAxis: {title: 'Number of cores'}
+#        };
+#
+#var chart_diff = new google.visualization.AreaChart(document.getElementById('chart_div_diff'));
+#chart_diff.draw(data_diff, options_diff);">>$OUT
 
 #----------------------
 echo '
@@ -101,28 +106,6 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>CMS GLOBAL POOL MONITOR: Global pool size and components for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_24h.html">24h</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_168h.html">1week</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_720h.html">1month</a>
-	<br><br>
-        
-	See also:
-	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_'$int'h.html" target="blank">jobs in the global pool</a>
-
-	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/Monitor/latest-new.txt" target="blank">summary tables for the global pool</a>, 
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/globalpool_jobs_info.txt" target="blank">full list of jobs in pool</a>, 
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/globalpool_running_jobs.txt" target="blank">with site info</a> and 
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/globalpool_pilot_info.txt" target="blank">pilots</a>
-
-        <br><a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=vocms032.cern.ch&r=hour&z=small&jr=&js=&st=1461321500&event=hide&ts=0&v=239&m=LastNegotiationCycleDuration0&vl=seconds&z=large" target="blank">negotiation time</a> and 
-	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=vocms032.cern.ch&r=hour&z=small&jr=&js=&st=1461321500&event=hide&ts=0&v=8806&m=AutoClusters%20in%20Pool&vl=autoclusters&z=large" target="blank">autoclusters</a>
-
-	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/multicore_usage_t1s_24h.html" target="blank">T1 mcore pilots</a> and
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_T1_24h.html" target="blank"> jobs</a>
-
-	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/T2s/multicore_usage_t2s_24h.html" target="blank">T2 mcore pilots</a> and
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_T2_24h.html" target="blank"> jobs</a>
-
 	</h2>
 	<br>
     </div>
@@ -130,7 +113,7 @@ p {text-align: center;
 
  <!--Div to hold the charts-->'>>$OUT
 echo ' <div id="chart_div_pool"></div><p>'$(echo "[avg, min, max]: " $stats_size)'</p><br><br>'>>$OUT
-echo ' <div id="chart_div_diff"></div><p>'$(echo "[avg, min, max]: " $stats_diff)'</p><br><br>'>>$OUT
+#echo ' <div id="chart_div_diff"></div><p>'$(echo "[avg, min, max]: " $stats_diff)'</p><br><br>'>>$OUT
 echo "
 </body>
 </html>" >>$OUT
