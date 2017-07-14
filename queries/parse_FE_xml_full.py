@@ -46,10 +46,9 @@ for group in fact_dict.keys():
 		#Skip if entry in downtime:
 		if down=='Down': continue
 		cpus=fact[1].find('Attributes').get('GLIDEIN_CPUS')
-		if cpus==None:
-			n_cpus=1
-		else:
-			n_cpus=int(fact[1].find('Attributes').get('GLIDEIN_CPUS'))
+		#print name, cpus
+		if cpus==None or cpus=="auto": continue
+		else: n_cpus=int(fact[1].find('Attributes').get('GLIDEIN_CPUS'))
 		#Get requested idle glidens:
 		n_idle=int(fact[1].find('Requested').get('Idle'))
 		#Print all values:
