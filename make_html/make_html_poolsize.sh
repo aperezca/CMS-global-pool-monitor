@@ -303,13 +303,13 @@ p {text-align: center;
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/globalpool_jobs_info.txt" target="blank">Additional performance metrics for running jobs</a> and 
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/globalpool_running_jobs.txt" target="blank">summary of running jobs with site info</a><br>
 
-        <br>Negotiation time plots for 
-	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=vocms032.cern.ch&r=hour&z=small&jr=&js=&st=1461321500&event=hide&ts=0&v=239&m=LastNegotiationCycleDuration0&vl=seconds&z=large" target="blank"> CM at CERN</a> and
-	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=cmssrv221.fnal.gov&r=hour&z=small&jr=&js=&st=1479854762&event=hide&ts=0&v=600&m=LastNegotiationCycleDuration0&vl=seconds&z=large" target="blank"> CM at FNAL</a> 
-	and autoclusters at 
-	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=vocms032.cern.ch&r=hour&z=small&jr=&js=&st=1461321500&event=hide&ts=0&v=8806&m=AutoClusters%20in%20Pool&vl=autoclusters&z=large" target="blank"> CM at CERN</a>
-	<a href="http://hcc-ganglia.unl.edu/graph_all_periods.php?c=crab-infrastructure&h=cmssrv221.fnal.gov&r=hour&z=small&jr=&js=&st=1479854807&event=hide&ts=0&v=18043&m=AutoClusters%20in%20Pool&vl=autoclusters&z=large" target="blank"> CM at FNAL</a>	
-
+        <br>Ganglia monitoring for 
+	<a href="http://hcc-ganglia.unl.edu/?r=hour&cs=&ce=&c=crab-infrastructure&h=vocms0808.cern.ch&tab=m&vn=&hide-hf=false&m=load_report&sh=1&z=small&hc=4&host_regex=&max_graphs=0&s=by+name" target="blank"> CM at CERN</a> and
+	<a href="http://hcc-ganglia.unl.edu/?r=hour&cs=&ce=&c=crab-infrastructure&h=cmssrv221.fnal.gov&tab=m&vn=&hide-hf=false&m=load_report&sh=1&z=small&hc=4&host_regex=&max_graphs=0&s=by+name" target="blank"> CM at FNAL</a> 
+	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/pool_negotime_24h.html" target="blank">Negotiation cycle monitor</a>
+	<br>
+	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_fragment_24h.html" target="blank">Pool fragmentation</a>
+	<br>
 	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_usage_t1s_24h.html" target="blank">T1 mcore pilots</a> and
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_T1_24h.html" target="blank"> jobs</a>
 

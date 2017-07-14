@@ -46,7 +46,7 @@ for site in `cat /home/aperez/entries/T1_sites`; do
                 isStacked: 'true',
                 explorer: {},
                 'height':500,
-		colors: ['#0040FF', '#FF0000', '#FFBF00'],
+		colors: ['#0040FF', '#FFBF00', '#FF0000'],
                 hAxis: {title: 'Time'},
                 vAxis: {title: 'Number of multicore pilots'}
         };
