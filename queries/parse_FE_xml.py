@@ -9,23 +9,12 @@ site_range=sys.argv[2]
 #print "Must provide (1) FE xml file and (2) site range (T1s, T2s)"
 
 #Get sites and entries from lists:
-if site_range=="T1s":
-	f_entries = open('/home/aperez/entries/entries_all_T1s', 'r')
-	f_sites = open('/home/aperez/entries/T1_sites', 'r')
-if site_range=="T2s":
-        f_entries = open('/home/aperez/entries/entries_all_T2s', 'r')
-        f_sites = open('/home/aperez/entries/T2_sites', 'r')
+if site_range=="T1s": f_sites = open('/home/aperez/entries/T1_sites', 'r')
+if site_range=="T2s": f_sites = open('/home/aperez/entries/T2_sites', 'r')
 
 
 sites = []
 for line in f_sites.readlines(): sites.append(line.split('\n')[0])
-all_entries=[]
-for line in f_entries.readlines(): all_entries.append(line.split('\n')[0])
-
-#print "------ Sites: ------"
-#print sites
-#print "------ Entries: ------"
-#print all_entries
 
 #Parse FE status xml
 #print file_name
@@ -36,43 +25,44 @@ root = tree.getroot()
 groups=root.find('groups').getchildren()
 my_groups=[]
 
-if site_range=="T1s":
-	for group in groups:
-		if group.get('name') == 'main' or group.get('name') == 't1prod': my_groups.append(group)
-if site_range=="T2s":
-        for group in groups:
-		if group.get('name') == 'main': my_groups.append(group)
+#if site_range=="T1s":
+#	for group in groups:
+#		if group.get('name') == 'main' or group.get('name') == 't1prod': my_groups.append(group)
+#if site_range=="T2s":
+# For now, just monitor "main" group
+for group in groups: 
+	if group.get('name') == 'main': my_groups.append(group)
 
 #print "----- selected groups -----"
 #for g in my_groups: print g.get('name')
-	
 
-mcore_fact_dict={}
+fact_dict={}
 for group in my_groups:
 	g_name=group.get('name')
+	#print g_name
 	factories=group.find('factories').getchildren()
 	#print factories
-	mcore_fact=[]
+	fact=[]
 	for factory in factories:
-		name=factory.get('name').split('@')[0]
-		if name in all_entries:
-			#print name
-			mcore_fact.append(factory)	
-		else: continue
+		#name=factory.get('name').split('@')[0]
+		fact.append(factory)	
 	#print mcore_fact
-	mcore_fact_dict[g_name]=mcore_fact
+	fact_dict[g_name]=fact
 
 #print "----- all factories -----"
-#print mcore_fact_dict
+#print fact_dict
 
 for site in sites:
-	for group in mcore_fact_dict.keys():
+	#print site
+	for group in fact_dict.keys():
+		#print group
 		ReqIdle = 0
-		for fact in mcore_fact_dict[group]:
-			name = fact.get('name')
-			n=int(fact.find('Requested').get('Idle'))
-			#print name, n
-			if site in name: ReqIdle+=n
+		for fact in fact_dict[group]:
+			name = fact.get('name').split('@')[0]
+			#print name
+			if site in name: 
+				try: ReqIdle+=int(fact.find('Requested').get('Idle'))
+				except: continue
 		print site, group, ReqIdle
 
 
