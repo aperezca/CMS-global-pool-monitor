@@ -35,11 +35,9 @@ for site in `cat /home/aperez/entries/T1_sites`; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
 		#content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
-		if [[ $(echo $line |awk '{print $2}') != "" ]] && [[ $(echo $line |awk '{print $3}') != "" ]]; then 
-			content=$(echo $line |awk '{print $2", "$3}')
-		else
-			content="0, 0"
-		fi
+		val=$(echo $line |awk '{print $2+$3}')
+		#echo $val
+		content="0, $val"
 		echo "[new Date($timemil), $content], " >>$OUT
 	done </home/aperez/status/input_file_frontend_$site$int
 	declare "stats_$site=$(python /home/aperez/get_averages.py /home/aperez/status/input_file_frontend_$site$int)"

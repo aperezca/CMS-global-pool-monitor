@@ -40,7 +40,8 @@ for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
         	fi
 		echo "[new Date($timemil), $content], " >>$OUT
 	done </home/aperez/status/input_$neg$int
-	#stats_$neg=$(python /home/aperez/get_averages.py /home/aperez/status/input_$neg$int)
+	list=$(python /home/aperez/get_averages.py /home/aperez/status/input_$neg$int)
+	declare "stats_$neg=$(echo $list)"
 	rm /home/aperez/status/input_$neg$int
 
 	echo "      ]);
