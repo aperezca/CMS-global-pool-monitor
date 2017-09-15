@@ -11,7 +11,7 @@ except:
 try:
 	date_min=sys.argv[2]
 	comm="date -d "+str(date_min)+" -u +%s"
-	print "from ",date_min
+	#print "from ",date_min
 	date_min_s=int(commands.getoutput(comm))
 except:
 	#date_min_s=0
@@ -21,7 +21,7 @@ except:
 try:
 	date_max=sys.argv[3]
 	comm="date -d "+str(date_max)+" -u +%s"
-        print "to ", date_max
+        #print "to ", date_max
 	date_max_s=int(commands.getoutput(comm))
 except:
 	#date_max_s=9999999999
@@ -36,7 +36,7 @@ except:
 
 #daily=True	
 #print "from ", date_min_s, "to ", date_max_s
-if not daily: print "requested single average values for the whole range"
+#if not daily: print "requested single average values for the whole range"
 
 # Get and filter entries in the time range by the first field which is timestamp
 
@@ -48,7 +48,7 @@ def lines_in_range( file, min_s, max_s ):
 		#print line
 		if int(line[0])>min_s and int(line[0])<max_s: lines.append(line)
 		else: continue
-	print "found", len(lines), "entries"
+	#print "found", len(lines), "entries"
 	return lines
 
 # Get and print averages 
@@ -86,7 +86,8 @@ if not daily:
 	my_lines = lines_in_range(file_name, date_min_s, date_max_s)
 	results = average(my_lines)
 	#print results
-	print results[2], results[4]#, float(results[4]/results[2])
+	#print results[2], results[4], float(results[4]/results[2])
+	print float(results[4]/results[2])
 else:
 	start=date_min_s
 	end=start+86400

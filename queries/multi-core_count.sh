@@ -29,18 +29,21 @@ cores_in_child_preempting_all=0
 
 for site in `cat "/home/aperez/entries/"$list"_sites"`; do
 	#echo $site
+	# number of pilots
 	n_pilots=$(cat /home/aperez/status/glideins_$list|grep -w $site |grep Partitionable |wc -l)
-
+	# total cores in p-slots
 	n_cores_part=0
 	for i in `cat /home/aperez/status/glideins_$list| grep -w $site |grep Partitionable| awk '{print $4}'|sort |uniq -c |awk '{print $1*$2}'`; do let n_cores_part+=i; done
+	# cores unclaimed idle in p-slots
 	cores_in_parent=0
-	for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Partitionable |awk '{print $3}'`; do let cores_in_parent+=i; done
+	for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Partitionable |awk '{print $3}'|sort |uniq -c |awk '{print $1*$2}'`; do let cores_in_parent+=i; done
+	# cores in dynamic slots
 	cores_in_child_busy=0
-	for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Dynamic |grep "Busy" | awk '{print $3}'`; do let cores_in_child_busy+=i; done
+	for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Dynamic |grep Busy | awk '{print $3}'`; do let cores_in_child_busy+=i; done
 	cores_in_child_idle=0
-        for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Dynamic |grep "Idle" | awk '{print $3}'`; do let cores_in_child_idle+=i; done
+        for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Dynamic |grep Idle | awk '{print $3}'`; do let cores_in_child_idle+=i; done
 	cores_in_child_preempting=0
-        for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Dynamic |grep "Preempting Killing" | awk '{print $3}'`; do let cores_in_child_preempting+=i; done
+        for i in `cat /home/aperez/status/glideins_$list |grep -w $site |grep Dynamic |grep Preempting | awk '{print $3}'`; do let cores_in_child_preempting+=i; done
 
 	let n_cores_idle=$cores_in_parent+$cores_in_child_idle
 	let n_cores_busy=$cores_in_child_busy

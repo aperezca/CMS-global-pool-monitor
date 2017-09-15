@@ -8,6 +8,7 @@ curl http://cmsgwms-frontend-global.cern.ch/vofrontend/monitor/frontend_status.x
 date=`date -u +%s`
 
 # Parse xml to produce output in terms of requested idle glideins
+
 # a) For all sites in global pool (t1prod and main groups so far)
 FE_full=$(python /home/aperez/parse_FE_xml_full.py /home/aperez/FE_status/FE_CERN_status.xml)
 echo $date $FE_full>>/crabprod/CSstoragePath/aperez/out/frontend_full
