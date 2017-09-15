@@ -7,6 +7,12 @@ else
 	long=""
 fi
 
+ratio=1
+if [[ $int -gt "720" ]]; then ratio=2; fi # more than 1 month
+if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
+if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
+if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
+
 OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"pool_negotime_"$int"h.html"
 echo '<html>
 <head>
@@ -28,7 +34,7 @@ for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
 	data_$neg.addColumn('number', 'Sorting'); 
         data_$neg.addColumn('number', 'Matching');
 	data_$neg.addRows([">>$OUT
-	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/negotime_$neg >/home/aperez/status/input_$neg$int
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/negotime_$neg|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_$neg$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
@@ -88,7 +94,7 @@ Notes on negotiation phases from HTCondor <a href="http://research.cs.wisc.edu/h
 <br>
 LastNegotiationCyclePhase1Duration: The duration, in seconds, of Phase 1 of the negotiation cycle: the process of getting submitter and machine ClassAds from the condor_collector. 
 <br>
-LastNegotiationCyclePhase2Duration: The duration, in seconds, of Phase 2 of the negotiation cycle: the process of filtering slots and processing accounting group configuration. 
+LastNegotiationCyclePhase2Duration: The duration, in seconds, of Phase 2 of the negotiation cycle: the process of filtering slots (by NEGOTIATOR_SLOT_POOLSIZE_CONSTRAINT) and processing accounting group configuration. 
 <br>
 LastNegotiationCyclePhase3Duration: The duration, in seconds, of Phase 3 of the negotiation cycle: sorting submitters by priority. 
 <br>

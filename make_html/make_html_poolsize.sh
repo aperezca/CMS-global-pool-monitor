@@ -7,6 +7,12 @@ else
 	long=""
 fi
 
+ratio=1
+if [[ $int -gt "720" ]]; then ratio=2; fi # more than 1 month
+if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
+if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
+if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
+
 OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"global_pool_size_"$int"h.html"
 echo '<html>
 <head>
@@ -30,7 +36,7 @@ data_pool.addColumn('number', 'T2 score');
 data_pool.addColumn('number', 'T3 score');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_size$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
@@ -64,7 +70,7 @@ data_poolidle.addColumn('number', 'mcore idle');
 data_poolidle.addColumn('number', 'score idle');
 
 data_poolidle.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -97,7 +103,7 @@ data_pooleff.addColumn('number', 'score occupation');
 data_pooleff.addColumn('number', 'pool occupation');
 
 data_pooleff.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle >/home/aperez/status/input_pool_idle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -136,7 +142,7 @@ data_mcoreidle.addColumn('number', 'idle unclaimed');
 data_mcoreidle.addColumn('number', 'idle claimed');
 
 data_mcoreidle.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_mcoreidle >/home/aperez/status/input_pool_mcoreidle$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_mcoreidle |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_mcoreidle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -175,7 +181,7 @@ data_FE.addColumn('number', 'T2_main_score');
 data_FE.addColumn('number', 'T3_main_score');
 
 data_FE.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/frontend_full >/home/aperez/status/input_FE_full$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/frontend_full |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_FE_full$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -211,7 +217,7 @@ data_jobs.addColumn('number', 'Prod jobs');
 data_jobs.addColumn('number', 'Analysis jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_global >/home/aperez/status/input_jobs_running_global$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_global |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_jobs_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -246,7 +252,7 @@ data_jobstier.addColumn('number', 'T2 Prod jobs');
 data_jobstier.addColumn('number', 'T2 Analysis jobs');
 
 data_jobstier.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_T0AndGlobalPool >/home/aperez/status/input_jobstier_running_global$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_T0AndGlobalPool |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_jobstier_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -287,7 +293,11 @@ p {text-align: center;
         <h2>CMS GLOBAL POOL MONITOR: Global pool size and components for the last '$int' hours, updated at '$(date -u)'<br>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_24h.html">24h</a>
 	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_168h.html">1week</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_720h.html">1month</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_720h.html">1, </a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_2160h.html">3, </a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_4320h.html">6, </a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_6480h.html">9, </a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_8640h.html">12 months</a>
 	<br><br>
         
 	See also:

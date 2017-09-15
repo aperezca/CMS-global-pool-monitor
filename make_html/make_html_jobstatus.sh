@@ -7,6 +7,12 @@ else
 	long=""
 fi
 
+ratio=1
+if [[ $int -gt "720" ]]; then ratio=2; fi # more than 1 month
+if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
+if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
+if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
+
 OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"jobstatus_"$int"h.html"
 echo '<html>
 <head>
@@ -28,7 +34,7 @@ data_jobs.addColumn('number', 'Running jobs');
 data_jobs.addColumn('number', 'Queued jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size >/home/aperez/status/input_jobs_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobs_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -60,7 +66,7 @@ data_jobcores.addColumn('number', 'Cores running jobs');
 data_jobcores.addColumn('number', 'Cores queued jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size >/home/aperez/status/input_jobcores_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -93,7 +99,7 @@ data_clusters.addColumn('number', 'Autoclusters crab');
 data_clusters.addColumn('number', 'Autoclusters other');
 
 data_clusters.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters >/home/aperez/status/input_autoclusters$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_autoclusters$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -125,7 +131,7 @@ data_clusters_q.addColumn('number', 'Autoclusters prod');
 data_clusters_q.addColumn('number', 'Autoclusters crab');
 
 data_clusters_q.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters_queued >/home/aperez/status/input_autoclusters_q$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_autoclusters_q$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -157,7 +163,7 @@ data_jobs_prod.addColumn('number', 'Running jobs');
 data_jobs_prod.addColumn('number', 'Queued jobs');
 
 data_jobs_prod.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_prod >/home/aperez/status/input_jobs_size_prod$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_prod |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_jobs_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -189,7 +195,7 @@ data_jobcores_prod.addColumn('number', 'Cores running jobs');
 data_jobcores_prod.addColumn('number', 'Cores queued jobs');
 
 data_jobcores_prod.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_prod >/home/aperez/status/input_jobcores_size_prod$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_prod|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -222,7 +228,7 @@ data_jobs_crab.addColumn('number', 'Running jobs');
 data_jobs_crab.addColumn('number', 'Queued jobs');
 
 data_jobs_crab.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_crab >/home/aperez/status/input_jobs_size_crab$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_crab|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobs_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -255,7 +261,7 @@ data_jobcores_crab.addColumn('number', 'Cores running jobs');
 data_jobcores_crab.addColumn('number', 'Cores queued jobs');
 
 data_jobcores_crab.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_crab >/home/aperez/status/input_jobcores_size_crab$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_crab|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -289,7 +295,7 @@ data_jobs_other.addColumn('number', 'Running jobs');
 data_jobs_other.addColumn('number', 'Queued jobs');
 
 data_jobs_other.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_other >/home/aperez/status/input_jobs_size_other$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_other|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobs_size_other$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -322,7 +328,7 @@ data_jobcores_other.addColumn('number', 'Cores running jobs');
 data_jobcores_other.addColumn('number', 'Cores queued jobs');
 
 data_jobcores_other.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_other >/home/aperez/status/input_jobcores_size_other$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_other|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size_other$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
