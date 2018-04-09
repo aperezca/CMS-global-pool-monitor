@@ -8,7 +8,6 @@ WORKDIR="/home/aperez/scale_test_monitoring"
 OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
 
 collector=$($WORKDIR/collector.sh)
-#echo $collector
 
 condor_status -pool $collector -const '(SlotType=?="Partitionable")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus GLIDEIN_MaxMemMBs |sort |uniq -c >$WORKDIR/status/all_partitionable_glideins.txt
 
@@ -19,6 +18,7 @@ size_part_T2s=0
 while read -r line; do
 	if [[ $(echo $line |grep T1_) != "" ]]; then let size_part_T1s+=$(echo $line | awk '{print $1*$4}'); fi
 	if [[ $(echo $line |grep T2_) != "" ]]; then let size_part_T2s+=$(echo $line | awk '{print $1*$4}'); fi
+	if [[ $(echo $line |grep T3_) != "" ]]; then let size_part_T2s+=$(echo $line | awk '{print $1*$4}'); fi
 done<$WORKDIR/status/all_partitionable_glideins.txt
 #echo $size_part_T1s $size_part_T2s
 
@@ -32,7 +32,6 @@ done<$WORKDIR/status/all_static_glideins.txt
 
 date_all=`date -u +%s`
 echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>$OUTDIR/out/pool_size
-echo $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s
 
 now=$(date -u)
 OUT=$OUTDIR"/HTML/globalpool_mcore_pilots_info.txt"

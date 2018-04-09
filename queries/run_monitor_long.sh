@@ -8,6 +8,7 @@ for i in 720 2160 4320 6480 8640; do # last 1, 3, 6, 9, 12 months
 done
 for i in 720; do # last month
 	#job info per site
+	/crabprod/CSstoragePath/aperez/make_html_job_sites.sh $i T0
 	/crabprod/CSstoragePath/aperez/make_html_job_sites.sh $i T1
         /crabprod/CSstoragePath/aperez/make_html_job_sites.sh $i T2
 	#T1s

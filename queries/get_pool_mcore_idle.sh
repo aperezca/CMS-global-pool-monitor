@@ -8,15 +8,15 @@ collector=$(/home/aperez/collector.sh)
 
 date_s=`date -u +%s`
 
+# NOTE: HLT cores are axcluded as GLIDEIN_ToRetire is undefined for those slots!
+
 #echo "Idle cores in mcore pilots in draining:"
 condor_status -pool $collector -const '(GLIDEIN_ToRetire<'${date_s}')' -af SlotType Activity State CPUs| grep -v Static| grep Idle | sort |uniq -c >/home/aperez/status/mcore_idle_retire.txt
 
 #echo "Idle cores in mcore pilots with not enough memory:"
-
 condor_status -pool $collector -const '(GLIDEIN_ToRetire>'${date_s}') && (Memory<2000)' -af SlotType Activity State CPUs| grep -v Static | grep Idle| sort |uniq -c >/home/aperez/status/mcore_idle_memory.txt
 
 #echo "Idle cores in mcore pilots with enough time and memory:"
-
 condor_status -pool $collector -const '(GLIDEIN_ToRetire>'${date_s}') && (Memory>2000)' -af SlotType Activity State CPUs| grep -v Static| grep Idle| sort |uniq -c >/home/aperez/status/mcore_idle_usable.txt
 
 n_retire=0

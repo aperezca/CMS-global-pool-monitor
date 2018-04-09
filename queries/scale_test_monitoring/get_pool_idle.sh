@@ -15,6 +15,9 @@ cores_mcore_busy=0
 cores_mcore_idle=0
 cores_score_busy=0
 cores_score_idle=0
+#Added 2017/11/29
+n_dyn_slots=0
+n_sta_slots=0
 
 while read -r line; do
 	if [[ $(echo $line | grep Dynamic |grep Busy) != "" ]]; then let cores_mcore_busy+=$(echo $line | awk '{print $1*$4}'); fi
@@ -24,15 +27,20 @@ while read -r line; do
 
 	if [[ $(echo $line | grep Static |grep Busy) != "" ]]; then let cores_score_busy+=$(echo $line | awk '{print $1*$4}'); fi
 	if [[ $(echo $line | grep Static |grep Idle) != "" ]]; then let cores_score_idle+=$(echo $line | awk '{print $1*$4}'); fi
+
+	if [[ $(echo $line | grep Dynamic) != "" ]]; then let n_dyn_slots+=$(echo $line | awk '{print $1}'); fi
+	if [[ $(echo $line | grep Static) != "" ]]; then let n_sta_slots+=$(echo $line | awk '{print $1}'); fi
 done<$WORKDIR/status/cores_all_glideins.txt
 
 #echo $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_score_idle
 
 date_all=`date -u +%s`
 echo $date_all $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_score_idle >>$OUTDIR/out/pool_idle
-echo $cores_mcore_busy $cores_mcore_idle $cores_score_busy $cores_score_idle
+echo $date_all $n_dyn_slots $n_sta_slots>>$OUTDIR/out/pool_dynslots
+
 #------------------------------------------
 #A more detailed view of currently running pilot pool:
+#------------------------------------------
 date_s=`date -u +%s`
 condor_status -pool $collector -const '(GLIDEIN_ToRetire-'${date_s}'>0) && ((IOslots=?=undefined) || (IOslots != 1))' -af  SlotType TotalSlotCPUs CPUs Memory State Activity | sort |uniq -c >$WORKDIR/status/cores_fresh_glideins.txt
 date_s=`date -u +%s`
@@ -52,10 +60,11 @@ cat $WORKDIR/status/cores_retiring_glideins.txt                                 
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/HTML/globalpool_pilot_info.txt
 
 #----------------------------------------------
-#Current fragmentation of the pool: only claimed slots
-date_s=`date -u +%s`
-cat $WORKDIR/status/cores_fresh_glideins.txt |grep Claimed > $WORKDIR/status/claimed_fresh_glideins.txt
-cat $WORKDIR/status/cores_retiring_glideins.txt |grep Claimed > $WORKDIR/status/claimed_retiring_glideins.txt
+# Current fragmentation of the pool: only claimed slots
+# 2017-09-15 Include the constraint that these are only dynamic slots! 
+# Get dynamic claimed slots (may be running or idle!)
+cat $WORKDIR/status/cores_fresh_glideins.txt |grep Claimed |grep Dynamic > $WORKDIR/status/claimed_fresh_glideins.txt
+cat $WORKDIR/status/cores_retiring_glideins.txt |grep Claimed |grep Dynamic > $WORKDIR/status/claimed_retiring_glideins.txt
 
 for cores in {1..8}; do let slots_fresh_$cores=0; done
 for cores in {1..8}; do let slots_drain_$cores=0; done

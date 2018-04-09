@@ -2,6 +2,7 @@
 WORKDIR="/home/aperez/scale_test_monitoring"
 $WORKDIR/get_pool_size.sh
 $WORKDIR/get_pool_negotiator.sh
+$WORKDIR/get_pool_schedds.sh
 $WORKDIR/get_pool_frontend.sh
 $WORKDIR/get_pool_idle.sh
 $WORKDIR/get_pool_mcore_idle.sh
