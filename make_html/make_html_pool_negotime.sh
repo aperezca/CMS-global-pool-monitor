@@ -26,7 +26,7 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
 
-for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
+for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS T0; do
 	echo "var data_$neg = new google.visualization.DataTable();	
 	data_$neg.addColumn('datetime', 'Date');
       	data_$neg.addColumn('number', 'Collecting'); 
@@ -66,6 +66,40 @@ for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
       	chart_$neg.draw(data_$neg, options_$neg);">>$OUT
 done
 
+#----------------------
+#Schedds dropped by the negotiators:
+echo "var data_sch = new google.visualization.DataTable();     
+data_sch.addColumn('datetime', 'Date');
+data_sch.addColumn('number', 'Dropped schedds'); 
+
+data_sch.addRows([">>$OUT
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/schedds_out_time >/home/aperez/status/input_schedoot$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+	let n_sch=$(echo $line |wc -w)-1
+	#echo $n_sch
+        echo "[new Date($timemil), $n_sch], " >>$OUT
+done </home/aperez/status/input_schedoot$int
+stats_size=$(python /home/aperez/get_averages.py /home/aperez/status/input_schedoot$int)
+rm /home/aperez/status/input_schedoot$int
+
+echo "      ]);
+var options_sch = {
+        title: 'Global pool negotiation cycle dropped (timeout) schedds ',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0000A0', '#1569C7'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of schedds'}
+        };
+
+var chart_sch = new google.visualization.AreaChart(document.getElementById('chart_sch'));
+chart_sch.draw(data_sch, options_sch);">>$OUT
+
+#----------------------
+
 echo '
     }
 
@@ -84,10 +118,11 @@ p {text-align: center;
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
-for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
+for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS T0; do
 	var="stats_$neg"
         echo ' <div id="chart_div_'$neg'"></div><p>'$(echo "[avg, min, max]: " "${!var}")'</p><br><br>'
 done>>$OUT
+echo ' <div id="chart_sch"></div><p>'$(echo "[avg, min, max]: " $stats_sch)'</p><br><br>'>>$OUT
 
 echo "
 Notes on negotiation phases from HTCondor <a href="http://research.cs.wisc.edu/htcondor/manual/v8.7/13_Appendix_A.html" target="blank">manual</a>:

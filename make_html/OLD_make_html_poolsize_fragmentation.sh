@@ -104,41 +104,84 @@ var chart_retire = new google.visualization.AreaChart(document.getElementById('c
 chart_retire.draw(data_retire, options_retire);">>$OUT
 
 #----------------------
+# Size of partitionable unclaimed slots in fresh glideins:
+echo "var data_fresh = new google.visualization.DataTable();    
+data_fresh.addColumn('datetime', 'Date');
+data_fresh.addColumn('number', 'slots_0_cores');
+data_fresh.addColumn('number', 'slots_1_cores');
+data_fresh.addColumn('number', 'slots_2_cores');
+data_fresh.addColumn('number', 'slots_3_cores');
+data_fresh.addColumn('number', 'slots_4_cores');
+data_fresh.addColumn('number', 'slots_5_cores');
+data_fresh.addColumn('number', 'slots_6_cores');
+data_fresh.addColumn('number', 'slots_7_cores');
+data_fresh.addColumn('number', 'slots_8_cores');
 
-# Total number of dynamic slots in the pool:
-echo "var data_dyn = new google.visualization.DataTable();    
-data_dyn.addColumn('datetime', 'Date');
-data_dyn.addColumn('number', 'n_dyn_slots');
-data_dyn.addColumn('number', 'n_sta_slots');
+data_fresh.addRows([">>$OUT
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_occupancy_fresh|grep -v "0 0 0 0"|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_part_fresh$int
 
-data_dyn.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_dynslots$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3}')
+        content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_dynslots$int
-stats_dyn=$(python /home/aperez/get_averages.py /home/aperez/status/input_dynslots$int)
-rm /home/aperez/status/input_dynslots$int
+done </home/aperez/status/input_part_fresh$int
+stats_occ_fresh=$(python /home/aperez/get_averages.py /home/aperez/status/input_part_fresh$int)
+rm /home/aperez/status/input_part_fresh$int
 
 echo "      ]);
-var options_dyn = {
-        title: 'Number of dynamic and static slots in the pool',
+var options_occ_fresh = {
+        title: 'Partitionable slots occupancy for non-retiring 8-core glideins',
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0000FF', '#00BBFF'],
+        colors: ['#FF0000', '#FF8000', '#FFBF00', '#FFFF00', '#80FF00', '#00FF00', '#00BFFF', '#0080FF', '#0000FF'],
         hAxis: {title: 'Time'},
-        vAxis: {title: 'Number of slots'}
+        vAxis: {title: 'Number of cores'}
         };
 
-var chart_dyn = new google.visualization.AreaChart(document.getElementById('chart_div_dyn'));
-chart_dyn.draw(data_dyn, options_dyn);">>$OUT
+var chart_occ_fresh = new google.visualization.AreaChart(document.getElementById('chart_div_occ_fresh'));
+chart_occ_fresh.draw(data_fresh, options_occ_fresh);">>$OUT
+#---------------------
+# Size of partitionable unclaimed slots in retiring glideins:
+echo "var data_retire = new google.visualization.DataTable();    
+data_retire.addColumn('datetime', 'Date');
+data_retire.addColumn('number', 'slots_0_cores');
+data_retire.addColumn('number', 'slots_1_cores');
+data_retire.addColumn('number', 'slots_2_cores');
+data_retire.addColumn('number', 'slots_3_cores');
+data_retire.addColumn('number', 'slots_4_cores');
+data_retire.addColumn('number', 'slots_5_cores');
+data_retire.addColumn('number', 'slots_6_cores');
+data_retire.addColumn('number', 'slots_7_cores');
+data_retire.addColumn('number', 'slots_8_cores');
 
-#----------------------
+data_retire.addRows([">>$OUT
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_occupancy_drain|grep -v "0 0 0 0"|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_part_drain$int
 
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done </home/aperez/status/input_part_drain$int
+stats_occ_drain=$(python /home/aperez/get_averages.py /home/aperez/status/input_part_drain$int)
+rm /home/aperez/status/input_part_drain$int
 
+echo "      ]);
+var options_occ_drain = {
+        title: 'Partitionable slots occupancy for retiring 8-core glideins',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#FF0000', '#FF8000', '#FFBF00', '#FFFF00', '#80FF00', '#00FF00', '#00BFFF', '#0080FF', '#0000FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of cores'}
+        };
+
+var chart_occ_drain = new google.visualization.AreaChart(document.getElementById('chart_div_occ_drain'));
+chart_occ_drain.draw(data_retire, options_occ_drain);">>$OUT
+#---------------------
 echo '
     }
 
@@ -165,7 +208,8 @@ p {text-align: center;
  <!--Div to hold the charts-->'>>$OUT
 echo ' <div id="chart_div_fresh"></div><p>'$(echo "[avg, min, max]: " $stats_fresh)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_retire"></div><p>'$(echo "[avg, min, max]: " $stats_retire)'</p><br><br>'>>$OUT
-echo ' <div id="chart_div_dyn"></div><p>'$(echo "[avg, min, max]: " $stats_dyn)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_occ_fresh"></div><p>'$(echo "[avg, min, max]: " $stats_occ_fresh)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_occ_drain"></div><p>'$(echo "[avg, min, max]: " $stats_occ_drain)'</p><br><br>'>>$OUT
 echo "
 </body>
 </html>" >>$OUT

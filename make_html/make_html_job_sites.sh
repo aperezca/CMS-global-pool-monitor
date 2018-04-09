@@ -23,7 +23,8 @@ google.setOnLoadCallback(drawChart);
 function drawChart() {">>$OUT
 
 for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
-	#echo $site
+	echo $site
+	if [[ $site == "AllT0s" ]]; then continue; fi
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
       	data_$site.addColumn('number', 'production'); 
@@ -78,6 +79,7 @@ p {text-align: center;
  <!--Div to hold the charts-->'>>$OUT
 
 for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
+	if [[ $site == "AllT0s" ]]; then continue; fi
 	var="stats_$site"
         echo ' <div id="chart_div_'$site'"></div><p>'$(echo "[avg, min, max]: " "${!var}")'</p><br><br>'
 done>>$OUT

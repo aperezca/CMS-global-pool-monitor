@@ -98,7 +98,6 @@ chart_poolidle.draw(data_poolidle, options_poolidle);">>$OUT
 #Pool usage efficiencies:
 echo "var data_pooleff = new google.visualization.DataTable();     
 data_pooleff.addColumn('datetime', 'Date');
-data_pooleff.addColumn('number', 'mcore occupation'); 
 data_pooleff.addColumn('number', 'score occupation');
 data_pooleff.addColumn('number', 'pool occupation');
 
@@ -112,7 +111,8 @@ while read -r line; do
 	s_b=$(echo $line |awk '{print $4}')
 	s_i=$(echo $line |awk '{print $5}')
 	if [[ $m_b+$m_i -ne 0 ]] && [[ $s_b+$s_i -ne 0 ]]; then
-		content=$(echo $m_b $m_i $s_b $s_i |awk '{print $1/($1+$2)", "$3/($3+$4)", "($1+$3)/($1+$2+$3+$4)}')
+		content=$(echo $m_b $m_i $s_b $s_i |awk '{print $3/($3+$4)", "($1+$3)/($1+$2+$3+$4)}')
+		#content=$(echo $m_b $m_i $s_b $s_i |awk '{print $1/($1+$2)", "$3/($3+$4)", "($1+$3)/($1+$2+$3+$4)}')
 		echo "[new Date($timemil), $content], " >>$OUT
 	fi
 done </home/aperez/status/input_pool_idle$int
@@ -124,7 +124,7 @@ var options_pooleff = {
         isStacked: 'false',
         explorer: {},
         'height':500,
-        colors: ['#0040FF', '#0060FF', '#9090FF'],
+	colors: ['#000000', '#0060FF'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Occupation (%)', minValue: 0, maxValue: 1}
         };

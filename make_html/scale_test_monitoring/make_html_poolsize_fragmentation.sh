@@ -108,6 +108,38 @@ chart_retire.draw(data_retire, options_retire);">>$OUT
 
 #----------------------
 
+# Total number of dynamic slots in the pool:
+echo "var data_dyn = new google.visualization.DataTable();    
+data_dyn.addColumn('datetime', 'Date');
+data_dyn.addColumn('number', 'n_dyn_slots');
+data_dyn.addColumn('number', 'n_sta_slots');
+
+data_dyn.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_dynslots$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+	content=$(echo $line |awk '{print $2", "$3}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/input_dynslots$int
+stats_dyn=$(python /home/aperez/get_averages.py $WORKDIR/status/input_dynslots$int)
+rm $WORKDIR/status/input_dynslots$int
+
+echo "      ]);
+var options_dyn = {
+        title: 'Number of dynamic and static slots in the pool',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+	colors: ['#0000FF', '#00BBFF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of slots'}
+        };
+
+var chart_dyn = new google.visualization.AreaChart(document.getElementById('chart_div_dyn'));
+chart_dyn.draw(data_dyn, options_dyn);">>$OUT
+
+#----------------------
 echo '
     }
 
@@ -122,6 +154,10 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>CMS Test pool fragmentation by slot size in running glideins for the last '$int' hours, updated at '$(date -u)'<br>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/global_pool_fragment_24h.html">24h</a>
+        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/global_pool_fragment_168h.html">1week</a>
+        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/longglobal_pool_fragment_720h.html">1month</a>
+
 	</h2>
 	<br>
     </div>
@@ -130,6 +166,7 @@ p {text-align: center;
  <!--Div to hold the charts-->'>>$OUT
 echo ' <div id="chart_div_fresh"></div><p>'$(echo "[avg, min, max]: " $stats_fresh)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_retire"></div><p>'$(echo "[avg, min, max]: " $stats_retire)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_dyn"></div><p>'$(echo "[avg, min, max]: " $stats_dyn)'</p><br><br>'>>$OUT
 echo "
 </body>
 </html>" >>$OUT
