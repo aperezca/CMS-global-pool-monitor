@@ -3,7 +3,6 @@ source /etc/profile.d/condor.sh
 
 # Count CPUs for multicore and single core pilots at CMS global pool
 # Antonio Perez-Calero Yzquierdo Apr. Dec. 2016
-
 WORKDIR="/home/aperez"
 OUTDIR="/crabprod/CSstoragePath/aperez"
 
@@ -33,9 +32,13 @@ done<$WORKDIR/status/all_static_glideins.txt
 date_all=`date -u +%s`
 echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>$OUTDIR/out/pool_size
 
+# -------
+
 now=$(date -u)
 OUT=$OUTDIR"/HTML/globalpool_mcore_pilots_info.txt"
 condor_status -pool cmsgwms-collector-tier0.cern.ch -const '(SlotType=?="Partitionable")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus TotalSlotMemory|sort |uniq -c >$WORKDIR/status/all_partitionable_glideins_T0.txt
+
+# -------
 echo "## -------------------------------------------------------------------------" >>$OUT
 echo "## INFO ON RUNNING PARTITIONABLE PILOTS CONFIG UPDATED AT" $now >$OUT
 echo "## -------------------------------------------------------------------------" >>$OUT

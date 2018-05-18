@@ -1,7 +1,6 @@
 T2_BE_IIHE
 T2_BE_UCL
 T2_BR_SPRACE
-T2_CH_CERN
 T2_CH_CERN_HLT
 T2_CH_CSCS
 T2_CH_CSCS_HPC
@@ -21,6 +20,7 @@ T2_IT_Pisa
 T2_IT_Rome
 T2_KR_KISTI
 T2_PL_Swierk
+T2_PL_Warsaw
 T2_PT_NCG_Lisbon
 T2_RU_JINR
 T2_TW_NCHC
@@ -37,9 +37,14 @@ T2_US_UCSD
 T2_US_Vanderbilt
 T2_US_Wisconsin
 T3_CH_CERN_HelixNebula
+T3_CH_CERN_HelixNebula_REHA
 T3_IN_TIFRCloud
+T3_IT_Opportunistic_hnsci
+T3_IT_Opportunistic_dodas
+T3_UK_Opportunistic_dodas
 T3_US_Baylor
 T3_US_Colorado
 T3_US_NERSC
+T3_US_NotreDame
 T3_US_PuertoRico
 T3_US_OSG

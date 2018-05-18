@@ -11,16 +11,16 @@ now=$(date -u)
 
 # ---------------------------------------------------
 echo "## RUNNING JOBS info updated at" $now >$OUTDIR/globalpool_all_running_jobs_new.txt
-echo "## number_jobs RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName AutoClusterId AccountingGroup">>$OUTDIR/globalpool_all_running_jobs_new.txt
+echo "## number_jobs RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CMS_JobType CRAB_ReqName AutoClusterId AccountingGroup">>$OUTDIR/globalpool_all_running_jobs_new.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_all_running_jobs_new.txt
-condor_q -pool $collector -global -constraint '(JobStatus == 2)' -af RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName AutoClusterId AcctGroup|sort |uniq -c |sort -nr>>$OUTDIR/globalpool_all_running_jobs_new.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 2)' -af RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CMS_JobType CRAB_ReqName AutoClusterId AcctGroup|sort |uniq -c |sort -nr>>$OUTDIR/globalpool_all_running_jobs_new.txt
 mv $OUTDIR/globalpool_all_running_jobs_new.txt $OUTDIR/globalpool_all_running_jobs.txt
 
 # ---------------------------------------------------
 echo "## QUEUED JOBS info updated at" $now >$OUTDIR/globalpool_all_queued_jobs_new.txt
-echo "## number_jobs RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName AutoClusterId AccountingGroup">>$OUTDIR/globalpool_all_queued_jobs_new.txt
+echo "## number_jobs RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CMS_JobType CRAB_ReqName AutoClusterId AccountingGroup">>$OUTDIR/globalpool_all_queued_jobs_new.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_all_queued_jobs_new.txt
-condor_q -pool $collector -global -constraint '(JobStatus == 1)' -af RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CRAB_ReqName AutoClusterId AcctGroup|sort |uniq -c |sort -nr>>$OUTDIR/globalpool_all_queued_jobs_new.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 1)' -af RequestCPUs RequestMemory RequestDisk JobPrio WMAgent_RequestName CMS_JobType CRAB_ReqName AutoClusterId AcctGroup|sort |uniq -c |sort -nr>>$OUTDIR/globalpool_all_queued_jobs_new.txt
 mv $OUTDIR/globalpool_all_queued_jobs_new.txt $OUTDIR/globalpool_all_queued_jobs.txt
 
 # ----------------------
@@ -30,9 +30,9 @@ mv $OUTDIR/globalpool_all_queued_jobs_new.txt $OUTDIR/globalpool_all_queued_jobs
 echo "## INFO ON JOBS IN CMS GLOBAL POOL UPDATED AT" $now >$OUTDIR/globalpool_jobs_info_new.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
 echo "## RUNNING JOBS EXCEEDING 2.5 GB/core IN MEMORY REQUEST:">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## number_jobs RequestCPUs RequestMemory MemoryUsage Mem_use_% WMAgent_SubTaskName CRAB_ReqName">>$OUTDIR/globalpool_jobs_info_new.txt
+echo "## number_jobs RequestCPUs RequestMemory MemoryUsage Mem_use_% WMAgent_SubTaskName CRAB_ReqName AccountingGroup">>$OUTDIR/globalpool_jobs_info_new.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
-condor_q -pool $collector -global -constraint '(JobStatus == 2) && (RequestMemory>2500*RequestCPUs)' -af RequestCPUs RequestMemory MemoryUsage WMAgent_SubTaskName CRAB_ReqName |sort |uniq -c |awk '{print $1, $2, $3, $4, $4/$3, $5, $6 }' >$OUTDIR/globalpool_jobs_memory_use.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 2) && (RequestMemory>2500*RequestCPUs)' -af RequestCPUs RequestMemory MemoryUsage WMAgent_SubTaskName CRAB_ReqName AcctGroup|sort |uniq -c |awk '{print $1, $2, $3, $4, $4/$3, $5, $6, $7 }' >$OUTDIR/globalpool_jobs_memory_use.txt
 
 # ALREADY BEING MEMORY-TUNED BY UNIFIED
 condor_q -pool $collector -global -constraint '(JobStatus == 2) && (HasBeenMemoryTuned == True)' -af WMAgent_RequestName |sort |uniq >$OUTDIR/globalpool_jobs_mem_tuned.txt
@@ -73,9 +73,9 @@ rm $OUTDIR/globalpool_jobs_info_new_prod_not.txt
 # ---------------------------------------------------
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
 echo "## RUNNING JOBS EXCEEDING MEMORY REQUEST:">>$OUTDIR/globalpool_jobs_info_new.txt
-echo "## number_jobs RequestCPUs RequestMemory MemoryUsage ResidentSetSize WMAgent_SubTaskName CRAB_ReqName">>$OUTDIR/globalpool_jobs_info_new.txt
+echo "## number_jobs RequestCPUs RequestMemory MemoryUsage ResidentSetSize WMAgent_SubTaskName CRAB_ReqName AccountingGroup">>$OUTDIR/globalpool_jobs_info_new.txt
 echo "## -------------------------------------------------------------------------" >>$OUTDIR/globalpool_jobs_info_new.txt
-condor_q -pool $collector -global -constraint '(JobStatus == 2) && (MemoryUsage>RequestMemory)' -af RequestCPUs RequestMemory MemoryUsage ResidentSetSize/1000 WMAgent_SubTaskName CRAB_ReqName |sort |uniq -c |sort -nr>>$OUTDIR/globalpool_jobs_info_new.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 2) && (MemoryUsage>RequestMemory)' -af RequestCPUs RequestMemory MemoryUsage ResidentSetSize/1000 WMAgent_SubTaskName CRAB_ReqName AcctGroup |sort |uniq -c |sort -nr>>$OUTDIR/globalpool_jobs_info_new.txt
 
 # ------
 # OTHER:

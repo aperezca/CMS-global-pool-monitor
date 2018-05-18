@@ -10,7 +10,7 @@ OUTDIR="/crabprod/CSstoragePath/aperez/HTML/JobInfo"
 now=$(date -u)
 
 echo "querying condor collector for running jobs"
-condor_q -pool $collector -global -constraint '(JobStatus == 2)' -af MATCH_GLIDEIN_CMSSite WMAgent_RequestName CRAB_ReqName RequestCPUs RequestMemory JobPrio |sort |uniq -c >$OUTDIR/globalpool_running_jobs_new.txt
+condor_q -pool $collector -global -constraint '(JobStatus == 2)' -af MATCH_GLIDEIN_CMSSite WMAgent_RequestName CMS_JobType CRAB_ReqName RequestCPUs RequestMemory JobPrio |sort |uniq -c >$OUTDIR/globalpool_running_jobs_new.txt
 
 date_all=`date -u +%s`
 
@@ -24,19 +24,19 @@ T2_crab=0
 T3_crab=0
 while read -r line; do
 	prod_name=$(echo $line |awk '{print $3}')
-	crab_name=$(echo $line |awk '{print $4}')
+	crab_name=$(echo $line |awk '{print $5}')
 	if [[ $prod_name == "undefined" ]] && [[ $crab_name == "undefined" ]]; then continue; fi
 	site=$(echo $line |awk '{print $2}' |awk -F"_" '{print $1}')
 	if [[ $prod_name != "undefined" ]]; 
-		then let global_running_prod+=$(echo $line |awk '{print $1*$5}'); 
-		if [[ $site == "T1" ]]; then let T1_prod+=$(echo $line |awk '{print $1*$5}'); fi
-		if [[ $site == "T2" ]]; then let T2_prod+=$(echo $line |awk '{print $1*$5}'); fi
+		then let global_running_prod+=$(echo $line |awk '{print $1*$6}'); 
+		if [[ $site == "T1" ]]; then let T1_prod+=$(echo $line |awk '{print $1*$6}'); fi
+		if [[ $site == "T2" ]]; then let T2_prod+=$(echo $line |awk '{print $1*$6}'); fi
 	fi
 	if [[ $crab_name != "undefined" ]]; 
-		then let global_running_crab+=$(echo $line |awk '{print $1*$5}'); 
-		if [[ $site == "T1" ]]; then let T1_crab+=$(echo $line |awk '{print $1*$5}'); fi
-		if [[ $site == "T2" ]]; then let T2_crab+=$(echo $line |awk '{print $1*$5}'); fi
-		if [[ $site == "T3" ]]; then let T3_crab+=$(echo $line |awk '{print $1*$5}'); fi
+		then let global_running_crab+=$(echo $line |awk '{print $1*$6}'); 
+		if [[ $site == "T1" ]]; then let T1_crab+=$(echo $line |awk '{print $1*$6}'); fi
+		if [[ $site == "T2" ]]; then let T2_crab+=$(echo $line |awk '{print $1*$6}'); fi
+		if [[ $site == "T3" ]]; then let T3_crab+=$(echo $line |awk '{print $1*$6}'); fi
 	fi
 done<$OUTDIR/globalpool_running_jobs_new.txt
 
@@ -58,10 +58,10 @@ for list in T1 T2 T0; do
 		cat $OUTDIR/globalpool_running_jobs_new.txt |grep -w $site >$OUTDIR/running_jobs_$site.txt
 		while read -r line; do
 			prod_name=$(echo $line |awk '{print $3}')
-			crab_name=$(echo $line |awk '{print $4}')
+			crab_name=$(echo $line |awk '{print $5}')
 			if [[ $prod_name == "undefined" ]] && [[ $crab_name == "undefined" ]]; then continue; fi
-			if [[ $prod_name != "undefined" ]]; then let running_prod+=$(echo $line |awk '{print $1*$5}'); fi
-			if [[ $crab_name != "undefined" ]]; then let running_crab+=$(echo $line |awk '{print $1*$5}'); fi
+			if [[ $prod_name != "undefined" ]]; then let running_prod+=$(echo $line |awk '{print $1*$6}'); fi
+			if [[ $crab_name != "undefined" ]]; then let running_crab+=$(echo $line |awk '{print $1*$6}'); fi
 		done<$OUTDIR/running_jobs_$site.txt
 		#echo $date_all $running_prod $running_crab
 		echo $date_all $running_prod $running_crab >>/crabprod/CSstoragePath/aperez/out/jobs_running_$site

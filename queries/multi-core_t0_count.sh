@@ -76,7 +76,7 @@ for site in `cat "/home/aperez/entries/"$list"_sites"`; do
 done
 
 #echo $list
-echo $date_s $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all
+#echo $date_s $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all
 echo $date_s $n_pilots_all $n_cores_all $n_cores_tot_all $n_cores_busy_all $n_cores_idle_all $cores_in_child_preempting_all >>/crabprod/CSstoragePath/aperez/out/T0/count_All_"$list"s
 
 
