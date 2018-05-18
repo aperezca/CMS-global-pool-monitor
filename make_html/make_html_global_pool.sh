@@ -13,7 +13,10 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"global_pool_size_"$int"h.html"
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+OUT=$OUTDIR"/HTML/"$long"global_pool_size_"$int"h.html"
+
 echo '<html>
 <head>
 <title>CMS global pool running glideins monitor</title>
@@ -36,15 +39,15 @@ data_pool.addColumn('number', 'T2 score');
 data_pool.addColumn('number', 'T3 score');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_size$int
+tail -n $n_lines $OUTDIR/out/pool_size |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_pool_size$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
 	content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
 	echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_pool_size$int
-stats_size=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_size$int)
-rm /home/aperez/status/input_pool_size$int
+done <$WORKDIR/status/input_pool_size$int
+stats_size=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_pool_size$int)
+rm $WORKDIR/status/input_pool_size$int
 
 echo "      ]);
 var options_pool = {
@@ -70,15 +73,15 @@ data_poolidle.addColumn('number', 'mcore idle');
 data_poolidle.addColumn('number', 'score idle');
 
 data_poolidle.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_idle$int
+tail -n $n_lines $OUTDIR/out/pool_idle |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$4", "$3", "$5}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_pool_idle$int
-stats_idle=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_idle$int)
-rm /home/aperez/status/input_pool_idle$int
+done <$WORKDIR/status/input_pool_idle$int
+stats_idle=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_pool_idle$int)
+rm $WORKDIR/status/input_pool_idle$int
 
 echo "      ]);
 var options_poolidle = {
@@ -102,12 +105,13 @@ data_pooleff.addColumn('number', 'score occupation');
 data_pooleff.addColumn('number', 'pool occupation');
 
 data_pooleff.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_idle |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_idle$int
+tail -n $n_lines $OUTDIR/out/pool_idle |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_pool_idle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-	m_b=$(echo $line |awk '{print $2}')
-	m_i=$(echo $line |awk '{print $3}')
+	#correct for HLT slots!
+	m_b=$(echo $line |awk '{print $2-$6}')
+	m_i=$(echo $line |awk '{print $3-$7}')
 	s_b=$(echo $line |awk '{print $4}')
 	s_i=$(echo $line |awk '{print $5}')
 	if [[ $m_b+$m_i -ne 0 ]] && [[ $s_b+$s_i -ne 0 ]]; then
@@ -115,8 +119,8 @@ while read -r line; do
 		#content=$(echo $m_b $m_i $s_b $s_i |awk '{print $1/($1+$2)", "$3/($3+$4)", "($1+$3)/($1+$2+$3+$4)}')
 		echo "[new Date($timemil), $content], " >>$OUT
 	fi
-done </home/aperez/status/input_pool_idle$int
-rm /home/aperez/status/input_pool_idle$int
+done <$WORKDIR/status/input_pool_idle$int
+rm $WORKDIR/status/input_pool_idle$int
 
 echo "      ]);
 var options_pooleff = {
@@ -142,19 +146,19 @@ data_mcoreidle.addColumn('number', 'idle unclaimed');
 data_mcoreidle.addColumn('number', 'idle claimed');
 
 data_mcoreidle.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_mcoreidle |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_pool_mcoreidle$int
+tail -n $n_lines $OUTDIR/out/pool_mcoreidle |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_pool_mcoreidle$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
 	if [[ $(echo $line |awk '{print $5}') != "" ]]; then
         	content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
 	else
-		content=$(echo $line |awk '{print $2", "$3", "$4}'; echo ", 0")
+		content=$(echo $line |awk '{print $2", "$3", "$4", 0"}')
 	fi
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_pool_mcoreidle$int
-stats_mcoreidle=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_mcoreidle$int)
-rm /home/aperez/status/input_pool_mcoreidle$int
+done <$WORKDIR/status/input_pool_mcoreidle$int
+stats_mcoreidle=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_pool_mcoreidle$int)
+rm $WORKDIR/status/input_pool_mcoreidle$int
 
 echo "      ]);
 var options_mcoreidle = {
@@ -181,7 +185,7 @@ data_FE.addColumn('number', 'T2_main_score');
 data_FE.addColumn('number', 'T3_main_score');
 
 data_FE.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/frontend_full |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_FE_full$int
+tail -n $n_lines $OUTDIR/out/frontend_full |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_FE_full$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -191,9 +195,9 @@ while read -r line; do
 		content="0, 0, 0, 0, 0"
 	fi
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_FE_full$int
-stats_FE=$(python /home/aperez/get_averages.py /home/aperez/status/input_FE_full$int)
-rm /home/aperez/status/input_FE_full$int
+done <$WORKDIR/status/input_FE_full$int
+stats_FE=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_FE_full$int)
+rm $WORKDIR/status/input_FE_full$int
 
 echo "      ]);
 var options_FE = {
@@ -217,15 +221,15 @@ data_jobs.addColumn('number', 'Prod jobs');
 data_jobs.addColumn('number', 'Analysis jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_global |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_jobs_running_global$int
+tail -n $n_lines $OUTDIR/out/jobs_running_global |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_jobs_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobs_running_global$int
-stats_jobs=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_running_global$int)
-rm /home/aperez/status/input_jobs_running_global$int
+done <$WORKDIR/status/input_jobs_running_global$int
+stats_jobs=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_running_global$int)
+rm $WORKDIR/status/input_jobs_running_global$int
 
 echo "      ]);
 var options_jobs = {
@@ -252,15 +256,15 @@ data_jobstier.addColumn('number', 'T2 Prod jobs');
 data_jobstier.addColumn('number', 'T2 Analysis jobs');
 
 data_jobstier.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_T0AndGlobalPool |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_jobstier_running_global$int
+tail -n $n_lines $OUTDIR/out/jobs_running_T0AndGlobalPool |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_jobstier_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$4", "$5", "$6", "$7}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobstier_running_global$int
-stats_jobstier=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobstier_running_global$int)
-rm /home/aperez/status/input_jobstier_running_global$int
+done <$WORKDIR/status/input_jobstier_running_global$int
+stats_jobstier=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobstier_running_global$int)
+rm $WORKDIR/status/input_jobstier_running_global$int
 
 echo "      ]);
 var options_jobstier = {
