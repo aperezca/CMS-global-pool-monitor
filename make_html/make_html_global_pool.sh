@@ -219,13 +219,18 @@ echo "var data_jobs = new google.visualization.DataTable();
 data_jobs.addColumn('datetime', 'Date');
 data_jobs.addColumn('number', 'Prod jobs');
 data_jobs.addColumn('number', 'Analysis jobs');
+data_jobs.addColumn('number', 'Tier0 jobs');
 
 data_jobs.addRows([">>$OUT
 tail -n $n_lines $OUTDIR/out/jobs_running_global |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_jobs_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3}')
+	if [[ $(echo $line |wc -w) -eq 4 ]]; then
+		content=$(echo $line |awk '{print $2", "$3", "$4}')
+	else
+		content=$(echo $line |awk '{print $2", "$3", 0"}')
+	fi
         echo "[new Date($timemil), $content], " >>$OUT
 done <$WORKDIR/status/input_jobs_running_global$int
 stats_jobs=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_running_global$int)
@@ -237,7 +242,7 @@ var options_jobs = {
         isStacked: 'true',
         explorer: {},
         'height':500,
-	colors: ['#1569C7', '#52D017'],
+	colors: ['#1569C7', '#52D017', '#ff8553'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of cores'}
         };
@@ -250,29 +255,40 @@ chart_jobs.draw(data_jobs, options_jobs);">>$OUT
 echo "var data_jobstier = new google.visualization.DataTable();
 data_jobstier.addColumn('datetime', 'Date');
 data_jobstier.addColumn('number', 'T0 Prod jobs');
+data_jobstier.addColumn('number', 'T0 Analysis jobs');
+data_jobstier.addColumn('number', 'T0 Tier0 jobs');
 data_jobstier.addColumn('number', 'T1 Prod jobs');
 data_jobstier.addColumn('number', 'T1 Analysis jobs');
+data_jobstier.addColumn('number', 'T1 Tier0 jobs');
 data_jobstier.addColumn('number', 'T2 Prod jobs');
 data_jobstier.addColumn('number', 'T2 Analysis jobs');
+data_jobstier.addColumn('number', 'T2 Tier0 jobs');
 
 data_jobstier.addRows([">>$OUT
 tail -n $n_lines $OUTDIR/out/jobs_running_T0AndGlobalPool |awk -v var="$ratio" 'NR % var == 0'>$WORKDIR/status/input_jobstier_running_global$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$4", "$5", "$6", "$7}')
+
+        if [[ $(echo $line |wc -w) -eq 10 ]]; then
+                content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10}')
+        else
+		content=$(echo $line |awk '{print $2", "$3", 0, "$4", "$5", 0, "$6", "$7", 0"}')
+        fi
+        #content=$(echo $line |awk '{print $2", "$4", "$5", "$6", "$7}')
         echo "[new Date($timemil), $content], " >>$OUT
 done <$WORKDIR/status/input_jobstier_running_global$int
 stats_jobstier=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobstier_running_global$int)
 rm $WORKDIR/status/input_jobstier_running_global$int
 
+# colors: ['#FACC2E', '#4060C7', '#6060C7', '#70D017', '#90D017'],
 echo "      ]);
 var options_jobstier = {
         title: 'Running jobs cores at T0+T1s+T2s for production and analysis',
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#FACC2E', '#4060C7', '#6060C7', '#70D017', '#90D017'],
+        colors: ['#1569C7', '#52D017', '#ff8553', '#1569C7', '#52D017', '#ff8553', '#1569C7', '#52D017', '#ff8553'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of cores'}
         };
@@ -306,7 +322,7 @@ p {text-align: center;
         
 	See also:
 	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_'$int'h.html" target="blank">Time evolution of job metrics in the global pool</a>
-
+	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/Schedds/schedd_status_index.html" target="blank">Schedds status</a>
 	<br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/Monitor/latest-new.txt" target="blank">Summary table for the current global pool status</a> and
         <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/globalpool_pilot_info.txt" target="blank">currently running pilots and slots in the pool</a>
 	

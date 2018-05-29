@@ -24,17 +24,21 @@ function drawChart() {">>$OUT
 
 for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
 	echo $site
-	if [[ $site == "AllT0s" ]]; then continue; fi
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
       	data_$site.addColumn('number', 'production'); 
 	data_$site.addColumn('number', 'analysis');
+	data_$site.addColumn('number', 'tier0');
 	data_$site.addRows([">>$OUT
 	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_running_$site >/home/aperez/status/jobs_$site$long
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
-		content=$(echo $line |awk '{print $2", "$3}')
+		if [[ $(echo $line |wc -w) -eq 4 ]]; then
+			content=$(echo $line |awk '{print $2", "$3", "$4}')
+		else
+			content=$(echo $line |awk '{print $2", "$3", 0"}')
+		fi
 		echo "[new Date($timemil), $content], " >>$OUT
 	done </home/aperez/status/jobs_$site$long
 	declare "stats_$site=$(python /home/aperez/get_averages.py /home/aperez/status/jobs_$site$long)"
@@ -47,7 +51,7 @@ for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
                 isStacked: 'true',
         	explorer: {},
                 'height':500,
-		colors: ['#1569C7', '#52D017'],
+		colors: ['#1569C7', '#52D017', '#ff8553'],
                 hAxis: {title: 'Time'},
                 vAxis: {title: 'Number of cores in running jobs'}
         };
@@ -79,7 +83,6 @@ p {text-align: center;
  <!--Div to hold the charts-->'>>$OUT
 
 for site in `echo "All"$list"s"; cat "/home/aperez/entries/"$list"_sites"`; do
-	if [[ $site == "AllT0s" ]]; then continue; fi
 	var="stats_$site"
         echo ' <div id="chart_div_'$site'"></div><p>'$(echo "[avg, min, max]: " "${!var}")'</p><br><br>'
 done>>$OUT
