@@ -36,13 +36,13 @@ echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>$OU
 
 now=$(date -u)
 OUT=$OUTDIR"/HTML/globalpool_mcore_pilots_info.txt"
-condor_status -pool cmsgwms-collector-tier0.cern.ch -const '(SlotType=?="Partitionable")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus TotalSlotMemory|sort |uniq -c >$WORKDIR/status/all_partitionable_glideins_T0.txt
+condor_status -pool cmsgwms-collector-tier0.cern.ch -const '(SlotType=?="Partitionable")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus-TotalRepackSlots TotalSlotMemory|sort |uniq -c >$WORKDIR/status/all_partitionable_glideins_T0.txt
 
 # -------
-echo "## -------------------------------------------------------------------------" >>$OUT
-echo "## INFO ON RUNNING PARTITIONABLE PILOTS CONFIG UPDATED AT" $now >$OUT
-echo "## -------------------------------------------------------------------------" >>$OUT
+echo "## ----------------------------------------------------------------------------" >>$OUT
+echo "## INFO ON RUNNING PARTITIONABLE & STATIC PILOTS FOR CERN+GLOBAL POOLs UPDATED AT" $now >$OUT
+echo "## ----------------------------------------------------------------------------" >>$OUT
 echo "## MCORE GLIDEINS: #pilots CMS_Site SlotType TotalSlotCPUs TotalSlotMemory " >>$OUT
-echo "## -------------------------------------------------------------------------" >>$OUT
-cat $WORKDIR/status/all_partitionable_glideins_T0.txt $WORKDIR/status/all_partitionable_glideins.txt >>$OUT
-echo "## -------------------------------------------------------------------------" >>$OUT
+echo "## ----------------------------------------------------------------------------" >>$OUT
+cat $WORKDIR/status/all_partitionable_glideins_T0.txt $WORKDIR/status/all_partitionable_glideins.txt $WORKDIR/status/all_static_glideins.txt>>$OUT
+echo "## ----------------------------------------------------------------------------" >>$OUT

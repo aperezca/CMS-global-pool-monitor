@@ -13,24 +13,40 @@ collector=$($WORKDIR/collector.sh):9620
 
 date_all=`date -u +%s`
 echo "getting list of schedds and their status"
-condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters| sort >$WORKDIR/status/all_jobs
+condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters RecentDaemonCoreDutyCycle | sort >$WORKDIR/status/all_jobs
 
 total_jobs_run=0
 total_jobs_idle=0
 total_jobs_held=0
 
 while read -r line; do
-	let total_jobs_run+=$(echo $line |awk '{print $2}')
-	let total_jobs_idle+=$(echo $line |awk '{print $3}')
-	let total_jobs_held+=$(echo $line |awk '{print $4}')
+	schedd=$(echo $line |awk '{print $1}')
+	jobs_run=$(echo $line |awk '{print $2}')
+	jobs_idle=$(echo $line |awk '{print $3}')
+	jobs_held=$(echo $line |awk '{print $4}')
+	autoclusters=$(echo $line |awk '{print $6}')
+	dutycycle=$(echo $line |awk '{print $7}')
+	let total_jobs_run+=$jobs_run
+	let total_jobs_idle+=$jobs_idle
+	let total_jobs_held+=$jobs_held
+	echo $date_all $autoclusters >>$OUTDIR/out/autoclusters_$schedd
+	echo $date_all $dutycycle >>$OUTDIR/out/dutycycle_$schedd
+	
 done<$WORKDIR/status/all_jobs
 echo $date_all $total_jobs_run $total_jobs_idle $total_jobs_held >>$OUTDIR/out/jobs_size
+
 
 # By group, jobs:
 cat $WORKDIR/status/all_jobs |grep prod >$WORKDIR/status/all_jobs_prod
 cat $WORKDIR/status/all_jobs |grep crab >$WORKDIR/status/all_jobs_crab
 cat $WORKDIR/status/all_jobs |grep tier0 >$WORKDIR/status/all_jobs_tier0
 cat $WORKDIR/status/all_jobs |grep -v crab |grep -v prod |grep -v tier0 >$WORKDIR/status/all_jobs_other
+
+cat $WORKDIR/status/all_jobs_prod |awk '{print $1}' >$WORKDIR/status/schedds_prod
+cat $WORKDIR/status/all_jobs_crab |awk '{print $1}' >$WORKDIR/status/schedds_crab
+cat $WORKDIR/status/all_jobs_tier0 |awk '{print $1}' >$WORKDIR/status/schedds_tier0
+cat $WORKDIR/status/all_jobs_other |awk '{print $1}' >$WORKDIR/status/schedds_other
+echo "getting info for each group"
 
 for i in 'prod' 'crab' 'tier0' 'other'; do
 	let jobs_run_$i=0
@@ -79,6 +95,7 @@ for i in 'prod' 'crab' 'tier0' 'other'; do
                                 let jobcores_idle_$i+=$cores;
                                 let schedd_jobs_idle+=$jobs;
                                 let schedd_cores_idle+=$cores;
+				
                         fi
                         if [[ $state == "2" ]]; then
                                 let jobcores_run_total+=$cores;
@@ -104,3 +121,4 @@ autoclusters_prod_queued=$(cat $OUTDIR/HTML/JobInfo/globalpool_all_queued_jobs.t
 autoclusters_crab_queued=$(cat $OUTDIR/HTML/JobInfo/globalpool_all_queued_jobs.txt |awk '{print $9, $10}' | grep analysis |sort |uniq |wc -l)
 autoclusters_tier0_queued=$(cat $OUTDIR/HTML/JobInfo/globalpool_all_queued_jobs.txt |awk '{print $9, $10}' | grep tier0 |sort |uniq |wc -l)
 echo $date_all $autoclusters_prod_queued $autoclusters_crab_queued $autoclusters_tier0_queued >>$OUTDIR/out/autoclusters_queued
+

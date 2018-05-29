@@ -1,6 +1,7 @@
 for i in 720 2160 4320 6480 8640; do # last 1, 3, 6, 9, 12 months
 	#global pool
 	/crabprod/CSstoragePath/aperez/make_html_global_pool.sh $i
+	/crabprod/CSstoragePath/aperez/make_html_cern_pool.sh $i
         /crabprod/CSstoragePath/aperez/make_html_jobstatus.sh $i
 	/crabprod/CSstoragePath/aperez/make_html_pool_negotime.sh $i
 	/crabprod/CSstoragePath/aperez/make_html_pool_fragmentation.sh $i
