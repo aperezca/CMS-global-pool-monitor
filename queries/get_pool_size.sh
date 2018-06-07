@@ -15,7 +15,7 @@ condor_status -pool $collector -const '(SlotType=?="Static") && ((IOslots=?=unde
 size_part_T1s=0
 size_part_T2s=0
 while read -r line; do
-	if [[ $(echo $line |grep T1_) != "" ]]; then let size_part_T1s+=$(echo $line | awk '{print $1*$4}'); fi
+	if [[ $(echo $line |grep -e T1_ -e T0_CH_CSCS_HPC) != "" ]]; then let size_part_T1s+=$(echo $line | awk '{print $1*$4}'); fi
 	if [[ $(echo $line |grep T2_) != "" ]]; then let size_part_T2s+=$(echo $line | awk '{print $1*$4}'); fi
 	if [[ $(echo $line |grep T3_) != "" ]]; then let size_part_T2s+=$(echo $line | awk '{print $1*$4}'); fi
 done<$WORKDIR/status/all_partitionable_glideins.txt

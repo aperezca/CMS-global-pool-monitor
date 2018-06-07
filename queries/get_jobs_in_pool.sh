@@ -13,7 +13,7 @@ collector=$($WORKDIR/collector.sh):9620
 
 date_all=`date -u +%s`
 echo "getting list of schedds and their status"
-condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters RecentDaemonCoreDutyCycle | sort >$WORKDIR/status/all_jobs
+condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters RecentDaemonCoreDutyCycle RecentResourceRequestsSent NumOwners| sort >$WORKDIR/status/all_jobs
 
 total_jobs_run=0
 total_jobs_idle=0
@@ -26,12 +26,16 @@ while read -r line; do
 	jobs_held=$(echo $line |awk '{print $4}')
 	autoclusters=$(echo $line |awk '{print $6}')
 	dutycycle=$(echo $line |awk '{print $7}')
+	resrequest=$(echo $line |awk '{print $8}')
+	owners=$(echo $line |awk '{print $9}')
 	let total_jobs_run+=$jobs_run
 	let total_jobs_idle+=$jobs_idle
 	let total_jobs_held+=$jobs_held
 	echo $date_all $autoclusters >>$OUTDIR/out/autoclusters_$schedd
 	echo $date_all $dutycycle >>$OUTDIR/out/dutycycle_$schedd
-	
+	echo $date_all $resrequest >>$OUTDIR/out/resrequest_$schedd
+	echo $date_all $owners >>$OUTDIR/out/owners_$schedd	
+
 done<$WORKDIR/status/all_jobs
 echo $date_all $total_jobs_run $total_jobs_idle $total_jobs_held >>$OUTDIR/out/jobs_size
 
