@@ -69,15 +69,15 @@ data_jobcores.addColumn('number', 'Cores running jobs');
 data_jobcores.addColumn('number', 'Cores queued jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size$int
+tail -n $n_lines $OUTDIR/out/jobcores_size|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobcores_size$int
-stats_jobcores=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size$int)
-rm /home/aperez/status/input_jobcores_size$int
+done <$WORKDIR/status/input_jobcores_size$int
+stats_jobcores=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size$int)
+rm $WORKDIR/status/input_jobcores_size$int
 
 echo "      ]);
 var options_jobcores = {
@@ -103,7 +103,7 @@ data_clusters.addColumn('number', 'Autoclusters tier0');
 data_clusters.addColumn('number', 'Autoclusters other');
 
 data_clusters.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_autoclusters$int
+tail -n $n_lines $OUTDIR/out/autoclusters|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_autoclusters$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -113,9 +113,9 @@ while read -r line; do
 		content=$(echo $line |awk '{print $2", "$3", 0, "$4}')
 	fi
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_autoclusters$int
-stats_clusters=$(python /home/aperez/get_averages.py /home/aperez/status/input_autoclusters$int)
-rm /home/aperez/status/input_autoclusters$int
+done <$WORKDIR/status/input_autoclusters$int
+stats_clusters=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_autoclusters$int)
+rm $WORKDIR/status/input_autoclusters$int
 
 echo "      ]);
 var options_clusters = {
@@ -139,7 +139,7 @@ data_clusters_q.addColumn('number', 'Autoclusters prod');
 data_clusters_q.addColumn('number', 'Autoclusters crab');
 data_clusters_q.addColumn('number', 'Autoclusters tier0');
 data_clusters_q.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_autoclusters_q$int
+tail -n $n_lines $OUTDIR/out/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_autoclusters_q$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -149,9 +149,9 @@ while read -r line; do
 		content=$(echo $line |awk '{print $2", "$3", 0"}')
 	fi
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_autoclusters_q$int
-stats_clusters_q=$(python /home/aperez/get_averages.py /home/aperez/status/input_autoclusters_q$int)
-rm /home/aperez/status/input_autoclusters_q$int
+done <$WORKDIR/status/input_autoclusters_q$int
+stats_clusters_q=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_autoclusters_q$int)
+rm $WORKDIR/status/input_autoclusters_q$int
 
 echo "      ]);
 var options_clusters_q = {

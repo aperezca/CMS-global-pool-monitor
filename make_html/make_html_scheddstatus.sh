@@ -129,7 +129,7 @@ var chart_clusters = new google.visualization.AreaChart(document.getElementById(
 chart_clusters.draw(data_clusters, options_clusters);">>$OUT
 
 #----------------------
-# Autoclusters in schedd
+# CoreDutyCycle in schedd
 echo "var data_dutycycle = new google.visualization.DataTable();
 data_dutycycle.addColumn('datetime', 'Date');
 data_dutycycle.addColumn('number', 'RecentCoreDutyCycle');
@@ -159,7 +159,67 @@ var options_dutycycle = {
 var chart_dutycycle = new google.visualization.AreaChart(document.getElementById('chart_div_dutycycle'));
 chart_dutycycle.draw(data_dutycycle, options_dutycycle);">>$OUT
 
+#----------------------
+# RecentResourceRequestsSent in schedd
+echo "var data_resrequest = new google.visualization.DataTable();
+data_resrequest.addColumn('datetime', 'Date');
+data_resrequest.addColumn('number', 'RecentResRequestsSent');
 
+data_resrequest.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/resrequest_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_resrequest_$schedd$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/input_resrequest_$schedd$int
+stats_resrequest=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_resrequest_$schedd$int)
+rm $WORKDIR/status/input_resrequest_$schedd$int
+
+echo "      ]);
+var options_resrequest = {
+        title: '$schedd RecentResRequestsSent',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0040FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'resrequest'}
+        };
+
+var chart_resrequest = new google.visualization.AreaChart(document.getElementById('chart_div_resrequest'));
+chart_resrequest.draw(data_resrequest, options_resrequest);">>$OUT
+
+#----------------------
+# NumOwners in schedd
+echo "var data_owners = new google.visualization.DataTable();
+data_owners.addColumn('datetime', 'Date');
+data_owners.addColumn('number', 'NumOwners');
+
+data_owners.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/owners_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_owners_$schedd$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/input_owners_$schedd$int
+stats_owners=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_owners_$schedd$int)
+rm $WORKDIR/status/input_owners_$schedd$int
+
+echo "      ]);
+var options_owners = {
+        title: '$schedd NumOwners',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0040FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'owners'}
+        };
+
+var chart_owners = new google.visualization.AreaChart(document.getElementById('chart_div_owners'));
+chart_owners.draw(data_owners, options_owners);">>$OUT
 #---------------
 
 echo '
@@ -187,6 +247,8 @@ echo ' <div id="chart_div_jobs"></div><p>'$(echo "[avg, min, max]: " $stats_jobs
 echo ' <div id="chart_div_jobcores"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_clusters"></div><p>'$(echo "[avg, min, max]: " $stats_clusters)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_dutycycle"></div><p>'$(echo "[avg, min, max]: " $stats_dutycycle)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_resrequest"></div><p>'$(echo "[avg, min, max]: " $stats_resrequest)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_owners"></div><p>'$(echo "[avg, min, max]: " $stats_owners)'</p><br><br>'>>$OUT
 echo "
 </body>
 </html>" >>$OUT
