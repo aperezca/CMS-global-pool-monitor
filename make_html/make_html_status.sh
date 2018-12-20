@@ -1,6 +1,9 @@
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+
 site=$1
 now=$(date -u)
-OUT="/crabprod/CSstoragePath/aperez/HTML/site_status/status_mcore_"$site".html"
+OUT="$OUTDIR/HTML/site_status/status_mcore_"$site".html"
 echo '<html>
 <head>
 <title>CMS multicore pilot status</title>
@@ -17,7 +20,7 @@ while read -r line; do
 	ivalue=$(echo $line |awk '{print int($1/3600)}')
 	echo "	['$j', $ivalue], " >>$OUT
 	let j+=1	
-done</home/aperez/status/partglideins_now_$site
+done<$WORKDIR/status/partglideins_now_$site
 let index+=1
 echo "]);
 var options_age = {
@@ -36,7 +39,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print $2}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_$site
+done<$WORKDIR/status/partglideins_now_$site
 let index+=1
 echo "]);
 var options_cpus = {
@@ -55,7 +58,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($3/1000)}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_$site
+done<$WORKDIR/status/partglideins_now_$site
 let index+=1
 echo "]);
 var options_mem = {
@@ -74,7 +77,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($4/1000000)}')
         echo "  ['$j', $ivalue], " >>$OUT
 	let j+=1
-done</home/aperez/status/partglideins_now_$site
+done<$WORKDIR/status/partglideins_now_$site
 let index+=1
 echo "]);
 var options_disk = {
@@ -93,7 +96,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($5)}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_$site
+done<$WORKDIR/status/partglideins_now_$site
 let index+=1
 echo "]);
 var options_jobs = {

@@ -69,45 +69,6 @@ chart_fresh.draw(data_fresh, options_fresh);">>$OUT
 
 #----------------------
 
-#Retire glideins:
-echo "var data_retire = new google.visualization.DataTable();    
-data_retire.addColumn('datetime', 'Date');
-data_retire.addColumn('number', 'slots_1_cores');
-data_retire.addColumn('number', 'slots_2_cores');
-data_retire.addColumn('number', 'slots_3_cores');
-data_retire.addColumn('number', 'slots_4_cores');
-data_retire.addColumn('number', 'slots_5_cores');
-data_retire.addColumn('number', 'slots_6_cores');
-data_retire.addColumn('number', 'slots_7_cores');
-data_retire.addColumn('number', 'slots_8_cores');
-
-data_retire.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/pool_partition_drain|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_part_retire$int
-while read -r line; do
-        time=$(echo $line |awk '{print $1}')
-        let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9}')
-        echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_part_retire$int
-stats_retire=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_part_retire$int)
-rm $WORKDIR/status/input_part_retire$int
-
-echo "      ]);
-var options_retire = {
-        title: 'Cores in claimed dynamic slots by slot size for retiring glideins',
-        isStacked: 'true',
-        explorer: {},
-        'height':500,
-        colors: ['#FF0000', '#FF8000', '#FFBF00', '#FFFF00', '#80FF00', '#00FF00', '#00BFFF', '#0000FF'],
-        hAxis: {title: 'Time'},
-        vAxis: {title: 'Number of cores'}
-        };
-
-var chart_retire = new google.visualization.AreaChart(document.getElementById('chart_div_retire'));
-chart_retire.draw(data_retire, options_retire);">>$OUT
-
-#----------------------
-
 # Total number of dynamic slots in the pool:
 echo "var data_dyn = new google.visualization.DataTable();    
 data_dyn.addColumn('datetime', 'Date');
@@ -165,7 +126,6 @@ p {text-align: center;
 
  <!--Div to hold the charts-->'>>$OUT
 echo ' <div id="chart_div_fresh"></div><p>'$(echo "[avg, min, max]: " $stats_fresh)'</p><br><br>'>>$OUT
-echo ' <div id="chart_div_retire"></div><p>'$(echo "[avg, min, max]: " $stats_retire)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_dyn"></div><p>'$(echo "[avg, min, max]: " $stats_dyn)'</p><br><br>'>>$OUT
 echo "
 </body>

@@ -1,18 +1,12 @@
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
+#Interval to plot in mm/dd/yyyy format
+mysite=$1
+start=$2
+end=$3
 
-#Interval to plot in hours
-int=$1
-let n_lines=6*$int
-if [[ $int -gt "168" ]]; then  #put plots longer than one week at another location
-	long="long"
-else
-	long=""
-fi
-# Range of sites to plot
-list=$2
+start_t=$(date -d $start -u +%s)
+end_t=$(date -d $end -u +%s)
 
-OUT="$OUTDIR/HTML/JobInfo/"$long"jobstatus_"$list"_"$int"h.html"
+OUT="/crabprod/CSstoragePath/aperez/HTML/T2s/jobstatus_"$mysite"_"$(echo $start |awk -F"/" '{print $1 $2 $3}')"_"$(echo $end |awk -F"/" '{print $1 $2 $3}')".html"
 echo '<html>
 <head>
 <title>CMS global pool running jobs per site monitor</title>
@@ -25,27 +19,25 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
 
-for site in `echo "All"$list"s"; cat "$WORKDIR/entries/"$list"_sites"`; do
-	echo $site
+for site in $(echo $mysite); do
+	#echo $site
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
       	data_$site.addColumn('number', 'production'); 
 	data_$site.addColumn('number', 'analysis');
-	data_$site.addColumn('number', 'tier0');
 	data_$site.addRows([">>$OUT
-	tail -n $n_lines $OUTDIR/out/jobs_running_$site |sort >$WORKDIR/status/input_jobs_$site$int
+	rm /home/aperez/status/input_jobs_$site
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
-		let timemil=1000*$time
-		if [[ $(echo $line |wc -w) -eq 4 ]]; then
-			content=$(echo $line |awk '{print $2", "$3", "$4}')
-		else
-			content=$(echo $line |awk '{print $2", "$3", 0"}')
+		if [[ $time -gt $start_t ]] && [[ $time -lt $end_t ]]; then
+			echo $line>> /home/aperez/status/input_jobs_$site
+			let timemil=1000*$time
+			content=$(echo $line |awk '{print $2", "$3}')
+			echo "[new Date($timemil), $content], " >>$OUT
 		fi
-		echo "[new Date($timemil), $content], " >>$OUT
-	done <$WORKDIR/status/input_jobs_$site$int
-	declare "stats_$site=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_$site$int)"
-	rm $WORKDIR/status/input_jobs_$site$int
+	done </crabprod/CSstoragePath/aperez/out/jobs_running_$site
+	declare "stats_$site=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_$site)"
+	rm /home/aperez/status/input_jobs_$site
 
 	echo "      ]);
 
@@ -54,7 +46,7 @@ for site in `echo "All"$list"s"; cat "$WORKDIR/entries/"$list"_sites"`; do
                 isStacked: 'true',
         	explorer: {},
                 'height':500,
-		colors: ['#1569C7', '#52D017', '#ff8553'],
+		colors: ['#1569C7', '#52D017'],
                 hAxis: {title: 'Time'},
                 vAxis: {title: 'Number of cores in running jobs'}
         };
@@ -76,7 +68,7 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>GLOBAL POOL RUNNING JOBS AT CMS '$list's for the last '$int' hours, updated at '$(date -u)'<br>
+        <h2>GLOBAL POOL RUNNING JOBS AT CMS '$mysite' from '$start' until '$end', updated at '$(date -u)'<br>
 	</h2>
     </div>
 <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_'$list'_24h.html">24h</a>
@@ -85,7 +77,7 @@ p {text-align: center;
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
-for site in `echo "All"$list"s"; cat "$WORKDIR/entries/"$list"_sites"`; do
+for site in $(echo $mysite); do
 	var="stats_$site"
         echo ' <div id="chart_div_'$site'"></div><p>'$(echo "[avg, min, max]: " "${!var}")'</p><br><br>'
 done>>$OUT

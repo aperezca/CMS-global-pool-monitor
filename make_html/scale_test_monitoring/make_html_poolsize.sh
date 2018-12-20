@@ -227,7 +227,22 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>CMS TEST POOL MONITOR: ITB pool size and components for the last '$int' hours, updated at '$(date -u)'<br>
+        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/test_pool_size_24h.html">24h</a>
+        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/test_pool_size_168h.html">1week</a>
+        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/longtest_pool_size_720h.html">1month</a>
 	<br><br>
+
+        See also:
+        <br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/jobstatus_'$int'h.html" target="blank">Time evolution of job metrics in the global pool</a>
+        <br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/Schedds/schedd_status_index.html" target="blank">Schedds status</a>
+        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/globalpool_pilot_info.txt" target="blank">currently running pilots and slots in the pool</a>
+
+        <br>Ganglia monitoring for
+        <a href="http://hcc-ganglia.unl.edu/?r=hour&cs=&ce=&c=crab-infrastructure&h='$($WORKDIR/collector_itb.sh)'&tab=m&vn=&hide-hf=false&m=load_report&sh=1&z=small&hc=4&host_regex=&max_graphs=0&s=by+name" target="blank"> CM at CERN</a>
+        <br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/pool_negotime_'$int'h.html" target="blank">Negotiation cycle monitor</a>
+        <br>
+        <br><a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/global_pool_fragment_'$int'h.html" target="blank">Pool fragmentation</a>
+
         </h2>
     </div>
 <br>

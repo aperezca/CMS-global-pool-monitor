@@ -99,7 +99,6 @@ var chart_dyn = new google.visualization.AreaChart(document.getElementById('char
 chart_dyn.draw(data_dyn, options_dyn);">>$OUT
 
 #----------------------
-
 #Size of dynamic claimed slots in fresh glideins:
 echo "var data_cern = new google.visualization.DataTable();    
 data_cern.addColumn('datetime', 'Date');
@@ -168,6 +167,74 @@ var options_dyn_cern = {
 var chart_dyn_cern = new google.visualization.AreaChart(document.getElementById('chart_div_dyn_cern'));
 chart_dyn_cern.draw(data_dyn_cern, options_dyn_cern);">>$OUT
 #----------------------
+
+#Size of dynamic claimed slots in fresh glideins:
+echo "var data_volunteer = new google.visualization.DataTable();    
+data_volunteer.addColumn('datetime', 'Date');
+data_volunteer.addColumn('number', 'slots_1_cores');
+data_volunteer.addColumn('number', 'slots_2_cores');
+data_volunteer.addColumn('number', 'slots_3_cores');
+data_volunteer.addColumn('number', 'slots_4_cores');
+data_volunteer.addColumn('number', 'slots_5_cores');
+data_volunteer.addColumn('number', 'slots_6_cores');
+data_volunteer.addColumn('number', 'slots_7_cores');
+data_volunteer.addColumn('number', 'slots_8_cores');
+
+data_volunteer.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/Volunteer/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/Volunteer_pool/input_part_fresh$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/Volunteer_pool/input_part_fresh$int
+stats_volunteer=$(python $WORKDIR/get_averages.py $WORKDIR/status/Volunteer_pool/input_part_fresh$int)
+rm $WORKDIR/status/Volunteer_pool/input_part_fresh$int
+
+echo "      ]);
+var options_volunteer = {
+        title: 'Cores in claimed dynamic slots by slot size for CMS@Home Pool glideins',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#FF0000', '#FF8000', '#FFBF00', '#FFFF00', '#80FF00', '#00FF00', '#00BFFF', '#0000FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of cores'}
+        };
+
+var chart_volunteer = new google.visualization.AreaChart(document.getElementById('chart_div_volunteer'));
+chart_volunteer.draw(data_volunteer, options_volunteer);">>$OUT
+#----------------------
+# Total number of dynamic slots in the pool:
+echo "var data_dyn_volunteer = new google.visualization.DataTable();    
+data_dyn_volunteer.addColumn('datetime', 'Date');
+data_dyn_volunteer.addColumn('number', 'n_dyn_slots');
+
+data_dyn_volunteer.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/Volunteer/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/Volunteer_pool/input_dynslots$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/Volunteer_pool/input_dynslots$int
+stats_dyn_volunteer=$(python $WORKDIR/get_averages.py $WORKDIR/status/Volunteer_pool/input_dynslots$int)
+rm $WORKDIR/status/Volunteer_pool/input_dynslots$int
+
+echo "      ]);
+var options_dyn_volunteer = {
+        title: 'Number of dynamic slots in the CMS@Home Pool',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0000FF'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of slots'}
+        };
+
+var chart_dyn_volunteer = new google.visualization.AreaChart(document.getElementById('chart_div_dyn_volunteer'));
+chart_dyn_volunteer.draw(data_dyn_volunteer, options_dyn_volunteer);">>$OUT
+#----------------------
 echo '
     }
 
@@ -196,6 +263,8 @@ echo ' <div id="chart_div_fresh"></div><p>'$(echo "[avg, min, max]: " $stats_fre
 echo ' <div id="chart_div_dyn"></div><p>'$(echo "[avg, min, max]: " $stats_dyn)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_cern"></div><p>'$(echo "[avg, min, max]: " $stats_cern)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_dyn_cern"></div><p>'$(echo "[avg, min, max]: " $stats_dyn_cern)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_volunteer"></div><p>'$(echo "[avg, min, max]: " $stats_volunteer)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_dyn_volunteer"></div><p>'$(echo "[avg, min, max]: " $stats_dyn_volunteer)'</p><br><br>'>>$OUT
 echo "
 </body>
 </html>" >>$OUT

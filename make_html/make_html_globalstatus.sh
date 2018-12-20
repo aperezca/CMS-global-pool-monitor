@@ -1,5 +1,8 @@
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+
 now=$(date -u)
-OUT="/crabprod/CSstoragePath/aperez/HTML/status_mcore_global.html"
+OUT="$OUTDIR/HTML/status_mcore_global.html"
 echo '<html>
 <head>
 <title>CMS multicore pilot status for global pool</title>
@@ -17,7 +20,7 @@ echo "	google.load('visualization', '1', {packages: ['corechart']});
 #        ivalue=$(echo $line |awk '{print $1}')
 #        echo "  ['$j', $ivalue], " >>$OUT
 #        let j+=1
-#done</home/aperez/status/partglideins_now_global
+#done<$WORKDIR/status/partglideins_now_global
 #echo "]);
 #var options_site = {
 #        title: 'Pilot running at site',
@@ -38,7 +41,7 @@ while read -r line; do
 	echo "  ['$j', $ivalue], " >>$OUT
 	#echo "	[$ivalue], " >>$OUT
 	let j+=1	
-done</home/aperez/status/partglideins_now_global
+done<$WORKDIR/status/partglideins_now_global
 echo "]);
 var options_age = {
 	title: 'Pilot age (h)',
@@ -62,7 +65,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($3/3600)}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_global
+done<$WORKDIR/status/partglideins_now_global
 echo "]);
 var options_retire = {
         title: 'Pilot time to retire (h)',
@@ -85,7 +88,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print $4}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_global
+done<$WORKDIR/status/partglideins_now_global
 echo "]);
 var options_cpus = {
         title: 'Pilot unused CPU cores',
@@ -105,7 +108,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($5/1000)}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_global
+done<$WORKDIR/status/partglideins_now_global
 echo "]);
 var options_mem = {
         title: 'Pilot remaining unused memory (GB)',
@@ -125,7 +128,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($6/1000000)}')
         echo "  ['$j', $ivalue], " >>$OUT
 	let j+=1
-done</home/aperez/status/partglideins_now_global
+done<$WORKDIR/status/partglideins_now_global
 echo "]);
 var options_disk = {
         title: 'Pilot remaining unused disk (GB)',
@@ -146,7 +149,7 @@ while read -r line; do
         ivalue=$(echo $line |awk '{print int($7)}')
         echo "  ['$j', $ivalue], " >>$OUT
         let j+=1
-done</home/aperez/status/partglideins_now_global
+done<$WORKDIR/status/partglideins_now_global
 echo "]);
 var options_jobs = {
         title: 'Number of jobs executed by the pilot',

@@ -40,7 +40,7 @@ data_jobs.addColumn('number', 'Running jobs');
 data_jobs.addColumn('number', 'Queued jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobs_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_jobs_$schedd$int
+tail -n $n_lines $OUTDIR/out/jobs_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobs_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -65,6 +65,40 @@ var chart_jobs = new google.visualization.AreaChart(document.getElementById('cha
 chart_jobs.draw(data_jobs, options_jobs);">>$OUT
 
 #--------------------------
+# job rates in schedd:
+echo "var data_jobrate = new google.visualization.DataTable();
+data_jobrate.addColumn('datetime', 'Date');
+data_jobrate.addColumn('number', 'JobsStarted');
+data_jobrate.addColumn('number', 'JobsCompleted');
+data_jobrate.addColumn('number', 'JobsSubmitted');
+
+data_jobrate.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/recentjobs_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/recentjobs_$schedd$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/recentjobs_$schedd$int
+stats_jobrate=$(python $WORKDIR/get_averages.py $WORKDIR/status/recentjobs_$schedd$int)
+rm $WORKDIR/status/recentjobs_$schedd$int
+
+echo "      ]);
+var options_jobrate = {
+        title: '$schedd job rates ',
+        isStacked: 'false',
+        explorer: {},
+        'height':500,
+	lineWidth: 6,
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of jobs'}
+        };
+
+var chart_jobrate = new google.visualization.LineChart(document.getElementById('chart_div_jobrate'));
+chart_jobrate.draw(data_jobrate, options_jobrate);">>$OUT
+
+#--------------------------
+
 # Jobs x cores in schedd
 echo "var data_jobcores = new google.visualization.DataTable();
 data_jobcores.addColumn('datetime', 'Date');
@@ -72,7 +106,7 @@ data_jobcores.addColumn('number', 'Cores running jobs');
 data_jobcores.addColumn('number', 'Cores queued jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobscores_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_jobscores_$schedd$int
+tail -n $n_lines $OUTDIR/out/jobscores_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobscores_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -244,6 +278,7 @@ p {text-align: center;
  <!--Div to hold the charts-->'>>$OUT
 
 echo ' <div id="chart_div_jobs"></div><p>'$(echo "[avg, min, max]: " $stats_jobs)'</p><br><br>'>>$OUT
+echo ' <div id="chart_div_jobrate"></div><p>'$(echo "[avg, min, max]: " $stats_jobrate)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_jobcores"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_clusters"></div><p>'$(echo "[avg, min, max]: " $stats_clusters)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_dutycycle"></div><p>'$(echo "[avg, min, max]: " $stats_dutycycle)'</p><br><br>'>>$OUT

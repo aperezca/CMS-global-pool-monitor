@@ -1,3 +1,6 @@
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+
 #Interval to plot in hours
 int=$1
 let n_lines=6*$int
@@ -7,7 +10,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"global_pool_size_only_"$int"h.html"
+OUT="$OUTDIR/HTML/"$long"global_pool_size_only_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS global pool running glideins monitor</title>
@@ -30,15 +33,15 @@ data_pool.addColumn('number', 'T2 score');
 data_pool.addColumn('number', 'T3 score');
 
 data_pool.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_size >/home/aperez/status/input_pool_size$int
+tail -n $n_lines $OUTDIR/out/pool_size >$WORKDIR/status/input_pool_size$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
 	content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
 	echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_pool_size$int
-stats_size=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_size$int)
-rm /home/aperez/status/input_pool_size$int
+done <$WORKDIR/status/input_pool_size$int
+stats_size=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_pool_size$int)
+rm $WORKDIR/status/input_pool_size$int
 
 echo "      ]);
 var options_pool = {
@@ -66,16 +69,16 @@ chart_pool.draw(data_pool, options_pool);">>$OUT
 #data_diff.addColumn('number', 'cores starting-finishing pilots');
 #
 #data_diff.addRows([">>$OUT
-#tail -n $n_lines /crabprod/CSstoragePath/aperez/out/pool_diff_total >/home/aperez/status/input_pool_diff$int
+#tail -n $n_lines $OUTDIR/out/pool_diff_total >$WORKDIR/status/input_pool_diff$int
 #while read -r line; do
 #        time=$(echo $line |awk '{print $1}')
 #        let timemil=1000*$time
 #        #content=$(echo $line |awk '{print $2", "$3}')
 #	content=$(echo $line |awk '{print -$2+$3}')
 #        echo "[new Date($timemil), $content], " >>$OUT
-#done </home/aperez/status/input_pool_diff$int
-#stats_diff=$(python /home/aperez/get_averages.py /home/aperez/status/input_pool_diff$int)
-#rm /home/aperez/status/input_pool_diff$int
+#done <$WORKDIR/status/input_pool_diff$int
+#stats_diff=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_pool_diff$int)
+#rm $WORKDIR/status/input_pool_diff$int
 #
 #echo "      ]);
 #var options_diff = {

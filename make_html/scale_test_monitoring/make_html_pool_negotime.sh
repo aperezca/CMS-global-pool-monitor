@@ -29,7 +29,7 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
 
-for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
+for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS NEGOTIATOREU; do
 	echo "var data_$neg = new google.visualization.DataTable();	
 	data_$neg.addColumn('datetime', 'Date');
       	data_$neg.addColumn('number', 'Collecting'); 
@@ -69,6 +69,76 @@ for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
       	chart_$neg.draw(data_$neg, options_$neg);">>$OUT
 done
 
+#----------------------
+# CoreDutyCycle in negos
+echo "var data_dutycycle = new google.visualization.DataTable();
+data_dutycycle.addColumn('datetime', 'Date');
+data_dutycycle.addColumn('number', 'NEGO_T1');
+data_dutycycle.addColumn('number', 'NEGO');
+data_dutycycle.addColumn('number', 'NEGO_US');
+data_dutycycle.addColumn('number', 'NEGO_EU');
+
+data_dutycycle.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/negos_dutycycle|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_negos_dutycycle$int
+while read -r line; do
+	if [[ $(echo $line |wc -w ) -lt 4 ]]; then continue; fi
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+	if [[ $(echo $line |awk '{print $5}') != "" ]]; then
+        	content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
+	else
+		content=$(echo $line |awk '{print $2", "$3", "$4", "0}')
+	fi
+        echo "[new Date($timemil), $content], " >>$OUT
+done <$WORKDIR/status/input_negos_dutycycle$int
+#stats_dutycycle=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_negos_dutycycle$int)
+rm $WORKDIR/status/input_negos_dutycycle$int
+
+echo "      ]);
+var options_dutycycle = {
+        title: 'Global and CERN Pools Negotiators RecentCoreDutyCycle',
+        explorer: {},
+        'height':500,
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'dutycycle'}
+        };
+
+var chart_dutycycle = new google.visualization.LineChart(document.getElementById('chart_div_dutycycle'));
+chart_dutycycle.draw(data_dutycycle, options_dutycycle);">>$OUT
+#----------------------
+#Schedds dropped by the negotiators:
+echo "var data_sch = new google.visualization.DataTable();     
+data_sch.addColumn('datetime', 'Date');
+data_sch.addColumn('number', 'Dropped schedds'); 
+
+data_sch.addRows([">>$OUT
+tail -n $n_lines $OUTDIR/out/schedds_out_time >$WORKDIR/status/input_schedoot$int
+while read -r line; do
+        time=$(echo $line |awk '{print $1}')
+        let timemil=1000*$time
+        let n_sch=$(echo $line |wc -w)-1
+        #echo $n_sch
+        echo "[new Date($timemil), $n_sch], " >>$OUT
+done <$WORKDIR/status/input_schedoot$int
+stats_size=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_schedoot$int)
+rm $WORKDIR/status/input_schedoot$int
+
+echo "      ]);
+var options_sch = {
+        title: 'Global pool negotiation cycle dropped (timeout) schedds ',
+        isStacked: 'true',
+        explorer: {},
+        'height':500,
+        colors: ['#0000A0', '#1569C7'],
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Number of schedds'}
+        };
+
+var chart_sch = new google.visualization.AreaChart(document.getElementById('chart_sch'));
+chart_sch.draw(data_sch, options_sch);">>$OUT
+
+#----------------------
+
 echo '
     }
 
@@ -84,6 +154,9 @@ p {text-align: center;
 
     <div id="header">
         <h2>CMS test POOL negotiator time monitor for the last '$int' hours, updated at '$(date -u)'<br>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/pool_negotime_24h.html">24h</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/pool_negotime_168h.html">1week</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/longpool_negotime_720h.html">1month</a>
         <br><br>
         </h2>
     </div>
@@ -91,10 +164,12 @@ p {text-align: center;
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
-for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS; do
+for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS NEGOTIATOREU; do
 	var="stats_$neg"
         echo ' <div id="chart_div_'$neg'"></div><p>'$(echo "[avg, min, max]: " "${!var}")'</p><br><br>'
 done>>$OUT
+echo ' <div id="chart_div_dutycycle"></div><br><br>'>>$OUT
+echo ' <div id="chart_sch"></div><p>'$(echo "[avg, min, max]: " $stats_sch)'</p><br><br>'>>$OUT
 
 echo "
 Notes on negotiation phases from HTCondor <a href="http://research.cs.wisc.edu/htcondor/manual/v8.7/13_Appendix_A.html" target="blank">manual</a>:

@@ -13,9 +13,8 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-WORKDIR="/home/aperez/scale_test_monitoring"
-OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
-
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
 OUT=$OUTDIR"/HTML/"$long"jobstatus_"$int"h.html"
 echo '<html>
 <head>
@@ -37,19 +36,19 @@ data_jobs.addColumn('number', 'Running jobs');
 data_jobs.addColumn('number', 'Queued jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobs_size|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobs_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobs_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobs_size$int
-stats_jobs=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size$int)
-rm $WORKDIR/status/input_jobs_size$int
+done </home/aperez/status/input_jobs_size$int
+stats_jobs=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size$int)
+rm /home/aperez/status/input_jobs_size$int
 
 echo "      ]);
 var options_jobs = {
-        title: 'Test pool total job numbers',
+        title: 'Global pool total job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -69,19 +68,19 @@ data_jobcores.addColumn('number', 'Cores running jobs');
 data_jobcores.addColumn('number', 'Cores queued jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobcores_size|awk -v var="$ratio" 'NR % var == 0'| sort >$WORKDIR/status/input_jobcores_size$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobcores_size$int
-stats_jobcores=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size$int)
-rm $WORKDIR/status/input_jobcores_size$int
+done </home/aperez/status/input_jobcores_size$int
+stats_jobcores=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size$int)
+rm /home/aperez/status/input_jobcores_size$int
 
 echo "      ]);
 var options_jobcores = {
-        title: 'Test pool total job x cores numbers',
+        title: 'Global pool total job x cores numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -99,26 +98,27 @@ echo "var data_clusters = new google.visualization.DataTable();
 data_clusters.addColumn('datetime', 'Date');
 data_clusters.addColumn('number', 'Autoclusters prod');
 data_clusters.addColumn('number', 'Autoclusters crab');
+data_clusters.addColumn('number', 'Autoclusters tier0');
 data_clusters.addColumn('number', 'Autoclusters other');
 
 data_clusters.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/autoclusters|awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_autoclusters$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_autoclusters$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3", "$4}')
+        content=$(echo $line |awk '{print $2", "$3", "$4", "$5}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_autoclusters$int
-stats_clusters=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_autoclusters$int)
-rm $WORKDIR/status/input_autoclusters$int
+done </home/aperez/status/input_autoclusters$int
+stats_clusters=$(python /home/aperez/get_averages.py /home/aperez/status/input_autoclusters$int)
+rm /home/aperez/status/input_autoclusters$int
 
 echo "      ]);
 var options_clusters = {
-        title: 'Test pool job autoclusters',
+        title: 'Global pool job autoclusters',
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0000FF', '#0060FF', '#6000FF'],
+        colors: ['#0000FF', '#0060FF', '#6000FF', '#6060FF'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of job clusters in pool schedds'}
         };
@@ -132,25 +132,25 @@ echo "var data_clusters_q = new google.visualization.DataTable();
 data_clusters_q.addColumn('datetime', 'Date');
 data_clusters_q.addColumn('number', 'Autoclusters prod');
 data_clusters_q.addColumn('number', 'Autoclusters crab');
-
+data_clusters_q.addColumn('number', 'Autoclusters tier0');
 data_clusters_q.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0'| sort >$WORKDIR/status/input_autoclusters_q$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_autoclusters_q$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
-        content=$(echo $line |awk '{print $2", "$3}')
+        content=$(echo $line |awk '{print $2", "$3", "$4}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_autoclusters_q$int
-stats_clusters_q=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_autoclusters_q$int)
-rm $WORKDIR/status/input_autoclusters_q$int
+done </home/aperez/status/input_autoclusters_q$int
+stats_clusters_q=$(python /home/aperez/get_averages.py /home/aperez/status/input_autoclusters_q$int)
+rm /home/aperez/status/input_autoclusters_q$int
 
 echo "      ]);
 var options_clusters_q = {
-        title: 'Test pool idle job autoclusters',
+        title: 'Global pool idle job autoclusters',
         isStacked: 'true',
         explorer: {},
         'height':500,
-        colors: ['#0000FF', '#0060FF'],
+        colors: ['#0000FF', '#0060FF', '#6000FF'],
         hAxis: {title: 'Time'},
         vAxis: {title: 'Number of job clusters in pool schedds'}
         };
@@ -166,19 +166,19 @@ data_jobs_prod.addColumn('number', 'Running jobs');
 data_jobs_prod.addColumn('number', 'Queued jobs');
 
 data_jobs_prod.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobs_size_prod |awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_jobs_size_prod$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_prod |awk -v var="$ratio" 'NR % var == 0'>/home/aperez/status/input_jobs_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobs_size_prod$int
-stats_jobs_prod=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_prod$int)
-rm $WORKDIR/status/input_jobs_size_prod$int
+done </home/aperez/status/input_jobs_size_prod$int
+stats_jobs_prod=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_prod$int)
+rm /home/aperez/status/input_jobs_size_prod$int
 
 echo "      ]);
 var options_jobs_prod = {
-        title: 'Test pool production job numbers',
+        title: 'Global pool production job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -191,26 +191,26 @@ var chart_jobs_prod = new google.visualization.AreaChart(document.getElementById
 chart_jobs_prod.draw(data_jobs_prod, options_jobs_prod);">>$OUT
 
 #----------
-# Prod job coress in pool:
+# Prod job cores in pool:
 echo "var data_jobcores_prod = new google.visualization.DataTable();
 data_jobcores_prod.addColumn('datetime', 'Date');
 data_jobcores_prod.addColumn('number', 'Cores running jobs');
 data_jobcores_prod.addColumn('number', 'Cores queued jobs');
 
 data_jobcores_prod.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobcores_size_prod|awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_jobcores_size_prod$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_prod|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobcores_size_prod$int
-stats_jobcores_prod=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size_prod$int)
-rm $WORKDIR/status/input_jobcores_size_prod$int
+done </home/aperez/status/input_jobcores_size_prod$int
+stats_jobcores_prod=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size_prod$int)
+rm /home/aperez/status/input_jobcores_size_prod$int
 
 echo "      ]);
 var options_jobcores_prod = {
-        title: 'Test pool cores in production job numbers',
+        title: 'Global pool cores in production job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -231,19 +231,19 @@ data_jobs_crab.addColumn('number', 'Running jobs');
 data_jobs_crab.addColumn('number', 'Queued jobs');
 
 data_jobs_crab.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobs_size_crab|awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_jobs_size_crab$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_crab|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobs_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobs_size_crab$int
-stats_jobs_crab=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_crab$int)
-rm $WORKDIR/status/input_jobs_size_crab$int
+done </home/aperez/status/input_jobs_size_crab$int
+stats_jobs_crab=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_crab$int)
+rm /home/aperez/status/input_jobs_size_crab$int
 
 echo "      ]);
 var options_jobs_crab = {
-        title: 'Test pool analysis (crab3) job numbers',
+        title: 'Global pool analysis (crab3) job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -264,19 +264,19 @@ data_jobcores_crab.addColumn('number', 'Cores running jobs');
 data_jobcores_crab.addColumn('number', 'Cores queued jobs');
 
 data_jobcores_crab.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobcores_size_crab|awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_jobcores_size_crab$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_crab|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobcores_size_crab$int
-stats_jobcores_crab=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size_crab$int)
-rm $WORKDIR/status/input_jobcores_size_crab$int
+done </home/aperez/status/input_jobcores_size_crab$int
+stats_jobcores_crab=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size_crab$int)
+rm /home/aperez/status/input_jobcores_size_crab$int
 
 echo "      ]);
 var options_jobcores_crab = {
-        title: 'Test pool cores in analysis (crab3) job numbers',
+        title: 'Global pool cores in analysis (crab3) job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -291,6 +291,7 @@ chart_jobcores_crab.draw(data_jobcores_crab, options_jobcores_crab);">>$OUT
 
 #---------------
 
+#---------------
 # Other jobs in pool:
 echo "var data_jobs_other = new google.visualization.DataTable();
 data_jobs_other.addColumn('datetime', 'Date');
@@ -298,19 +299,19 @@ data_jobs_other.addColumn('number', 'Running jobs');
 data_jobs_other.addColumn('number', 'Queued jobs');
 
 data_jobs_other.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobs_size_other|awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_jobs_size_other$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_other|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobs_size_other$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobs_size_other$int
-stats_jobs_other=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_other$int)
-rm $WORKDIR/status/input_jobs_size_other$int
+done </home/aperez/status/input_jobs_size_other$int
+stats_jobs_other=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_other$int)
+rm /home/aperez/status/input_jobs_size_other$int
 
 echo "      ]);
 var options_jobs_other = {
-        title: 'Test pool other (not prod or crab 3) job numbers',
+        title: 'Global pool other (not prod or crab 3) job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -331,19 +332,19 @@ data_jobcores_other.addColumn('number', 'Cores running jobs');
 data_jobcores_other.addColumn('number', 'Cores queued jobs');
 
 data_jobcores_other.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobcores_size_other|awk -v var="$ratio" 'NR % var == 0' | sort>$WORKDIR/status/input_jobcores_size_other$int
+tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_other|awk -v var="$ratio" 'NR % var == 0' >/home/aperez/status/input_jobcores_size_other$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2", "$3}')
         echo "[new Date($timemil), $content], " >>$OUT
-done <$WORKDIR/status/input_jobcores_size_other$int
-stats_jobcores_other=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size_other$int)
-rm $WORKDIR/status/input_jobcores_size_other$int
+done </home/aperez/status/input_jobcores_size_other$int
+stats_jobcores_other=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size_other$int)
+rm /home/aperez/status/input_jobcores_size_other$int
 
 echo "      ]);
 var options_jobcores_other = {
-        title: 'Test pool cores in other (not prod or crab3) job numbers',
+        title: 'Global pool cores in other (not prod or crab3) job numbers',
         isStacked: 'true',
         explorer: {},
         'height':500,
@@ -370,12 +371,12 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>CMS TEST POOL JOB STATUS MONITOR: jobs in the global pool for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/jobstatus_24h.html">24h</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/jobstatus_168h.html">1week</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/longjobstatus_720h.html">1month</a>
-	</h2>
+        <h2>CMS GLOBAL POOL JOB STATUS MONITOR: jobs in the global pool for the last '$int' hours, updated at '$(date -u)'<br>
+	</h2><br>
     </div>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_24h.html">24h</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_168h.html">1week</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longjobstatus_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 

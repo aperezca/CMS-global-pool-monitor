@@ -1,3 +1,6 @@
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+
 #Interval to plot in hours
 int=$1
 let n_lines=6*$int
@@ -7,7 +10,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/JobInfo/"$long"jobs_resizable_"$int"h.html"
+OUT="$OUTDIR/HTML/JobInfo/"$long"jobs_resizable_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS global pool monitor on resizable jobs</title>
@@ -37,16 +40,16 @@ for i in jobs jobcores; do
         data_$i.addColumn('number', '${i}_10');
 
 	data_$i.addRows([">>$OUT
-	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/resizable_3_10_$i >/home/aperez/status/input_resizable_${i}_$int
+	tail -n $n_lines $OUTDIR/out/resizable_3_10_$i >$WORKDIR/status/input_resizable_${i}_$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
 		content=$(echo $line |awk '{print $2", "$3", "$4", "$5", "$6", "$7", "$8", "$9", "$10", "$11}')
 		echo "[new Date($timemil), $content], " >>$OUT
-	done </home/aperez/status/input_resizable_${i}_$int
-	stats=$(python /home/aperez/get_averages.py /home/aperez/status/input_resizable_${i}_$int)
+	done <$WORKDIR/status/input_resizable_${i}_$int
+	stats=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_resizable_${i}_$int)
 	declare "stats_$i=$(echo $stats)"
-	rm /home/aperez/status/input_resizable_${i}_$int
+	rm $WORKDIR/status/input_resizable_${i}_$int
 
 	echo "      ]);
 	var options_$i = {

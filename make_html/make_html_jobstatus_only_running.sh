@@ -1,3 +1,6 @@
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+
 #Interval to plot in hours
 int=$1
 let n_lines=6*$int
@@ -7,7 +10,7 @@ else
 	long=""
 fi
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/"$long"jobstatus_"$int"h.html"
+OUT="$OUTDIR/HTML/"$long"jobstatus_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS global pool job status monitor</title>
@@ -27,15 +30,15 @@ data_jobs.addColumn('datetime', 'Date');
 data_jobs.addColumn('number', 'Running jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size >/home/aperez/status/input_jobs_size$int
+tail -n $n_lines $OUTDIR/out/jobs_size >$WORKDIR/status/input_jobs_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobs_size$int
-stats_jobs=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size$int)
-rm /home/aperez/status/input_jobs_size$int
+done <$WORKDIR/status/input_jobs_size$int
+stats_jobs=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size$int)
+rm $WORKDIR/status/input_jobs_size$int
 
 echo "      ]);
 var options_jobs = {
@@ -58,15 +61,15 @@ data_jobcores.addColumn('datetime', 'Date');
 data_jobcores.addColumn('number', 'Cores running jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size >/home/aperez/status/input_jobcores_size$int
+tail -n $n_lines $OUTDIR/out/jobcores_size >$WORKDIR/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobcores_size$int
-stats_jobcores=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size$int)
-rm /home/aperez/status/input_jobcores_size$int
+done <$WORKDIR/status/input_jobcores_size$int
+stats_jobcores=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size$int)
+rm $WORKDIR/status/input_jobcores_size$int
 
 echo "      ]);
 var options_jobcores = {
@@ -89,15 +92,15 @@ data_jobs_prod.addColumn('datetime', 'Date');
 data_jobs_prod.addColumn('number', 'Running jobs');
 
 data_jobs_prod.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_prod >/home/aperez/status/input_jobs_size_prod$int
+tail -n $n_lines $OUTDIR/out/jobs_size_prod >$WORKDIR/status/input_jobs_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobs_size_prod$int
-stats_jobs_prod=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_prod$int)
-rm /home/aperez/status/input_jobs_size_prod$int
+done <$WORKDIR/status/input_jobs_size_prod$int
+stats_jobs_prod=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_prod$int)
+rm $WORKDIR/status/input_jobs_size_prod$int
 
 echo "      ]);
 var options_jobs_prod = {
@@ -120,15 +123,15 @@ data_jobcores_prod.addColumn('datetime', 'Date');
 data_jobcores_prod.addColumn('number', 'Cores running jobs');
 
 data_jobcores_prod.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_prod >/home/aperez/status/input_jobcores_size_prod$int
+tail -n $n_lines $OUTDIR/out/jobcores_size_prod >$WORKDIR/status/input_jobcores_size_prod$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobcores_size_prod$int
-stats_jobcores_prod=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size_prod$int)
-rm /home/aperez/status/input_jobcores_size_prod$int
+done <$WORKDIR/status/input_jobcores_size_prod$int
+stats_jobcores_prod=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size_prod$int)
+rm $WORKDIR/status/input_jobcores_size_prod$int
 
 echo "      ]);
 var options_jobcores_prod = {
@@ -152,15 +155,15 @@ data_jobs_crab.addColumn('datetime', 'Date');
 data_jobs_crab.addColumn('number', 'Running jobs');
 
 data_jobs_crab.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_crab >/home/aperez/status/input_jobs_size_crab$int
+tail -n $n_lines $OUTDIR/out/jobs_size_crab >$WORKDIR/status/input_jobs_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobs_size_crab$int
-stats_jobs_crab=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_crab$int)
-rm /home/aperez/status/input_jobs_size_crab$int
+done <$WORKDIR/status/input_jobs_size_crab$int
+stats_jobs_crab=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_crab$int)
+rm $WORKDIR/status/input_jobs_size_crab$int
 
 echo "      ]);
 var options_jobs_crab = {
@@ -184,15 +187,15 @@ data_jobcores_crab.addColumn('datetime', 'Date');
 data_jobcores_crab.addColumn('number', 'Cores running jobs');
 
 data_jobcores_crab.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobcores_size_crab >/home/aperez/status/input_jobcores_size_crab$int
+tail -n $n_lines $OUTDIR/out/jobcores_size_crab >$WORKDIR/status/input_jobcores_size_crab$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobcores_size_crab$int
-stats_jobcores_crab=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobcores_size_crab$int)
-rm /home/aperez/status/input_jobcores_size_crab$int
+done <$WORKDIR/status/input_jobcores_size_crab$int
+stats_jobcores_crab=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size_crab$int)
+rm $WORKDIR/status/input_jobcores_size_crab$int
 
 echo "      ]);
 var options_jobcores_crab = {
@@ -217,15 +220,15 @@ data_jobs_other.addColumn('datetime', 'Date');
 data_jobs_other.addColumn('number', 'Running jobs');
 
 data_jobs_other.addRows([">>$OUT
-tail -n $n_lines /crabprod/CSstoragePath/aperez/out/jobs_size_other >/home/aperez/status/input_jobs_size_other$int
+tail -n $n_lines $OUTDIR/out/jobs_size_other >$WORKDIR/status/input_jobs_size_other$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
         content=$(echo $line |awk '{print $2}')
         echo "[new Date($timemil), $content], " >>$OUT
-done </home/aperez/status/input_jobs_size_other$int
-stats_jobs_other=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_size_other$int)
-rm /home/aperez/status/input_jobs_size_other$int
+done <$WORKDIR/status/input_jobs_size_other$int
+stats_jobs_other=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_other$int)
+rm $WORKDIR/status/input_jobs_size_other$int
 
 echo "      ]);
 var options_jobs_other = {

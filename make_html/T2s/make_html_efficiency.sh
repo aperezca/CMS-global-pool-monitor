@@ -1,6 +1,3 @@
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
-
 #Interval to plot in hours
 int=$1
 let n_lines=6*$int
@@ -10,7 +7,7 @@ else
 	long=""
 fi
 
-OUT="$OUTDIR/HTML/T1s/"$long"multicore_eff_t1s_"$int"h.html"
+OUT="/crabprod/CSstoragePath/aperez/HTML/T2s/"$long"multicore_eff_t2s_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS multicore pilots core usage efficiency monitor</title>
@@ -23,24 +20,24 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
 
-for site in `echo "All_T1s"; cat $WORKDIR/entries/T1_sites`; do
+for site in `echo "All_T2s"; cat /home/aperez/entries/T2_sites`; do
 	#echo $site
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
 	data_$site.addColumn('number', 'occupancy');
 	data_$site.addRows([">>$OUT
-	tail -n $n_lines $OUTDIR/out/count_$site >$WORKDIR/status/input_file_eff_$site$int
+	tail -n $n_lines /crabprod/CSstoragePath/aperez/out/count_$site >/home/aperez/status/input_file_eff_$site$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
 		busy=$(echo $line |awk '{print $5}')
 		idle=$(echo $line |awk '{print $6}')
 		if [[ $busy+$idle -ne 0 ]]; then
-                	content=$(echo $busy $idle |awk '{print $1/($1+$2)}')
-                        echo "[new Date($timemil), $content], " >>$OUT
-                fi
-	done <$WORKDIR/status/input_file_eff_$site$int
-	rm $WORKDIR/status/input_file_eff_$site$int
+			content=$(echo $busy $idle |awk '{print $1/($1+$2)}')
+			echo "[new Date($timemil), $content], " >>$OUT
+		fi
+	done </home/aperez/status/input_file_eff_$site$int
+	rm /home/aperez/status/input_file_eff_$site$int
 
 	echo "      ]);
 
@@ -71,19 +68,19 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>MULTICORE PILOT USAGE OF CPU CORES AT CMS T1s for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_occupancy_t1s_'$int'h.html">(OCCUPANCY)</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_factory_t1s_'$int'h.html">(FACTORY STATUS)</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_frontend_t1s_'$int'h.html">(FRONT-END)</a>
+        <h2>MULTICORE PILOT USAGE OF CPU CORES AT CMS T2s for the last '$int' hours, updated at '$(date -u)'<br>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/multicore_occupancy_t2s_'$int'h.html">(OCCUPANCY)</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/multicore_factory_t2s_'$int'h.html">(FACTORY STATUS)</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/multicore_frontend_t2s_'$int'h.html">(FRONT-END)</a>
 	</h2>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_eff_t1s_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_eff_t1s_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/longmulticore_eff_t1s_720h.html">1month</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/multicore_eff_t2s_24h.html">24h</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/multicore_eff_t2s_168h.html">1week</a>
+<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T2s/longmulticore_eff_t2s_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
-for site in `echo "All_T1s"; cat $WORKDIR/entries/T1_sites`; do
+for site in `echo "All_T2s"; cat /home/aperez/entries/T2_sites`; do
 	var="stats_$site"
         echo ' <div id="chart_div_'$site'"></div><p></p><br><br>'
 done>>$OUT
