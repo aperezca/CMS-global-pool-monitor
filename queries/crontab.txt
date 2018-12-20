@@ -5,8 +5,10 @@
 */20 * * * * /home/aperez/run_monitor_html_pool.sh >/dev/null 2>&1
 */20 * * * * /home/aperez/run_monitor_html_t1s.sh >/dev/null 2>&1
 */20 * * * * /home/aperez/run_monitor_html_t2s.sh >/dev/null 2>&1
+*/20 * * * * /home/aperez/run_monitor_html_jobs.sh >/dev/null 2>&1
 #---------------
 */10 * * * * /home/aperez/run_monitor_t0.sh >/dev/null 2>&1
+*/10 * * * * /home/aperez/run_monitor_volunteer.sh >/dev/null 2>&1
 #*/10 * * * * /home/aperez/run_monitor_ucsd.sh >/dev/null 2>&1
 */10 * * * * /home/aperez/run_monitor_jobs.sh >/dev/null 2>&1
 # Monthly plots
@@ -23,8 +25,8 @@
 */20 * * * * /home/aperez/run_monitor_html_schedd.sh >/dev/null 2>&1
 #---------------
 # Job resource and usage watchdog
-*/30 * * * * /home/aperez/get_jobs_in_pool_resource_usage.sh >/dev/null 2>&1
-*/30 * * * * /home/aperez/get_jobs_in_pool_resizable.sh >/dev/null 2>&1
+#*/30 * * * * /home/aperez/get_jobs_in_pool_resource_usage.sh >/dev/null 2>&1
+#*/30 * * * * /home/aperez/get_jobs_in_pool_resizable.sh >/dev/null 2>&1
 #-------------------
 # Job watchdog
 #*/15 * * * * /home/aperez/status/watchdog/job_watchdog.sh >/dev/null 2>&1

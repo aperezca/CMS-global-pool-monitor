@@ -1,3 +1,4 @@
+T2_AT_Vienna
 T2_BE_IIHE
 T2_BE_UCL
 T2_BR_SPRACE
@@ -38,13 +39,18 @@ T2_US_Vanderbilt
 T2_US_Wisconsin
 T3_CH_CERN_HelixNebula
 T3_CH_CERN_HelixNebula_REHA
+T3_CH_CMSAtHome
+T3_CH_Opportunistic_opendata
 T3_IN_TIFRCloud
 T3_IT_Opportunistic_hnsci
 T3_IT_Opportunistic_dodas
+T3_IT_Opportunistic_Torino
 T3_UK_Opportunistic_dodas
 T3_US_Baylor
 T3_US_Colorado
 T3_US_NERSC
 T3_US_NotreDame
+T3_US_PSC
 T3_US_PuertoRico
 T3_US_OSG
+T3_US_TACC

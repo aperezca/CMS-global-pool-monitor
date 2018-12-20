@@ -9,11 +9,12 @@ source /etc/profile.d/condor.sh
 WORKDIR="/home/aperez"
 OUTDIR="/crabprod/CSstoragePath/aperez"
 
-collector=$($WORKDIR/collector.sh):9620
+collector=$($WORKDIR/collector.sh)
 
 date_all=`date -u +%s`
 echo "getting list of schedds and their status"
-condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters RecentDaemonCoreDutyCycle RecentResourceRequestsSent NumOwners| sort >$WORKDIR/status/all_jobs
+# THIS QUERY IS SAFE!
+condor_status -pool $collector -schedd -af Name TotalRunningJobs TotalIdleJobs TotalHeldJobs CMSGWMS_Type Autoclusters RecentDaemonCoreDutyCycle RecentResourceRequestsSent NumOwners RecentJobsStarted RecentJobsCompleted RecentJobsSubmitted| sort >$WORKDIR/status/all_jobs
 
 total_jobs_run=0
 total_jobs_idle=0
@@ -28,13 +29,15 @@ while read -r line; do
 	dutycycle=$(echo $line |awk '{print $7}')
 	resrequest=$(echo $line |awk '{print $8}')
 	owners=$(echo $line |awk '{print $9}')
+	recentjobs=$(echo $line |awk '{print $10, $11, $12}')
 	let total_jobs_run+=$jobs_run
 	let total_jobs_idle+=$jobs_idle
 	let total_jobs_held+=$jobs_held
 	echo $date_all $autoclusters >>$OUTDIR/out/autoclusters_$schedd
 	echo $date_all $dutycycle >>$OUTDIR/out/dutycycle_$schedd
 	echo $date_all $resrequest >>$OUTDIR/out/resrequest_$schedd
-	echo $date_all $owners >>$OUTDIR/out/owners_$schedd	
+	echo $date_all $owners >>$OUTDIR/out/owners_$schedd
+	echo $date_all $recentjobs >>$OUTDIR/out/recentjobs_$schedd
 
 done<$WORKDIR/status/all_jobs
 echo $date_all $total_jobs_run $total_jobs_idle $total_jobs_held >>$OUTDIR/out/jobs_size
@@ -74,16 +77,18 @@ echo $date_all $jobs_run_other $jobs_idle_other $jobs_held_other >>$OUTDIR/out/j
 echo $date_all $autoclusters_prod $autoclusters_crab $autoclusters_tier0 $autoclusters_other >>$OUTDIR/out/autoclusters
 
 # By group, jobs and cores:
+collector=$($WORKDIR/collector.sh):9620
 jobcores_run_total=0
 jobcores_idle_total=0
 
+#June 2018, added filter on (JobUniverse == 5) not to consider CRAB local or dagman jobs
 for i in 'prod' 'crab' 'tier0' 'other'; do
 	echo $i
 	let jobcores_run_$i=0
         let jobcores_idle_$i=0
         for schedd in $(cat $WORKDIR/status/all_jobs_$i |awk '{print $1}'); do
 		echo $schedd
-                condor_q -pool $collector -name $schedd -af JobStatus RequestCPUs AutoClusterId |sort |uniq -c >$WORKDIR/status/stats_jobcores_$schedd
+                condor_q -pool $collector -name $schedd -const '(JobUniverse == 5)' -af JobStatus RequestCPUs AutoClusterId |sort |uniq -c >$WORKDIR/status/stats_jobcores_$schedd
                 schedd_jobs_run=0
                 schedd_jobs_idle=0
                 schedd_cores_run=0

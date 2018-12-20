@@ -24,6 +24,12 @@ p {text-align: center;
 <body>
     <div id="header">
 	<h2> Schedd status monitor index <br></h2><br>'>$OUT
+# Insert info on dropped schedds:
+while read -r line; do
+	echo $line '<br>'>>$OUT
+done<$OUTDIR/HTML/globalpool_dropped_schedds.txt
+echo '<br>' >>$OUT
+
 for i in 'prod' 'crab' 'tier0' 'other'; do
 	echo '<h3>'$i' schedds </h3><br>' >>$OUT
 	for schedd in $(cat $WORKDIR/status/schedds_$i); do

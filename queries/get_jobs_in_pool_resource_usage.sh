@@ -4,9 +4,13 @@ source /etc/profile.d/condor.sh
 # Watch JOBS in CMS global pool
 # Antonio Perez-Calero Yzquierdo July-Aug  2016
 # Feb 2017, query child collector
-collector=$(/home/aperez/collector.sh):9620
 
+WORKDIR="/home/aperez"
 OUTDIR="/crabprod/CSstoragePath/aperez/HTML/JobInfo"
+
+collector=$($WORKDIR/collector.sh):9620
+#collector=$($WORKDIR/collector.sh)
+
 now=$(date -u)
 
 # ---------------------------------------------------

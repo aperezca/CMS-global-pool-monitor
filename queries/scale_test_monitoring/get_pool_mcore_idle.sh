@@ -7,7 +7,7 @@ source /etc/profile.d/condor.sh
 WORKDIR="/home/aperez/scale_test_monitoring"
 OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
 
-collector=$($WORKDIR/collector.sh)
+collector=$($WORKDIR/collector_itb.sh)
 
 date_s=`date -u +%s`
 

@@ -1,10 +1,13 @@
 #!/bin/sh
 source /etc/profile.d/condor.sh
-dir="/home/aperez/entries"
+WORKDIR="/home/aperez"
+OUTDIR="/crabprod/CSstoragePath/aperez"
+
+dir="$WORKDIR/entries"
 # Check Idle, Running and Held multicore pilots at T1s to evaluate glidein pressure on each site compared to pledged slots
 # Antonio Perez-Calero Yzquierdo Sep. 2015
 #factory infos
-for site in `cat /home/aperez/entries/T0_sites`; do
+for site in `cat $WORKDIR/entries/T0_sites`; do
 	#echo $site
 	date=`date -u +%s`
         idle_g=0
@@ -26,6 +29,6 @@ for site in `cat /home/aperez/entries/T0_sites`; do
                 	let held_g+=$held
 		done
 	done
-	echo $date $idle_g $running_g $held_g >>/crabprod/CSstoragePath/aperez/out/factories_$site
+	echo $date $idle_g $running_g $held_g >>$OUTDIR/out/factories_$site
 	#echo $date $idle_g $running_g $held_g
 done

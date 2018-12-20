@@ -31,8 +31,9 @@ echo "## -----------------------------------------------------------------------
 # Current fragmentation of the pool: only claimed slots
 # 2017-09-15 Include the constraint that these are only dynamic slots! 
 # Get dynamic claimed slots (may be running or idle!)
-cat $WORKDIR/status/cores_fresh_glideins.txt |grep Claimed |grep Dynamic > $WORKDIR/status/claimed_glideins.txt
-cat $WORKDIR/status/cores_retiring_glideins.txt |grep Claimed |grep Dynamic >> $WORKDIR/status/claimed_glideins.txt
+# 2018/06/23 removed the filter for Claimed/Unclaimed, keep all Dynamic!
+cat $WORKDIR/status/cores_fresh_glideins.txt |grep Dynamic > $WORKDIR/status/claimed_glideins.txt
+cat $WORKDIR/status/cores_retiring_glideins.txt |grep Dynamic >> $WORKDIR/status/claimed_glideins.txt
 
 for cores in {1..8}; do let slots_fresh_$cores=0; done
 #for cores in {1..8}; do let slots_drain_$cores=0; done
@@ -61,9 +62,9 @@ while read -r line; do
 	let occ_cores=$part_cores-$idle_cores
         #num=$(echo $line |awk '{print $1}')
         let slots_fresh_$occ_cores+=$(echo $line |awk '{print $1*$3}')
-done</home/aperez/status/unclaimed_glideins.txt
+done<$WORKDIR/status/unclaimed_glideins.txt
 
-echo $date_s $slots_fresh_0 $slots_fresh_1 $slots_fresh_2 $slots_fresh_3 $slots_fresh_4 $slots_fresh_5 $slots_fresh_6 $slots_fresh_7 $slots_fresh_8 >>/crabprod/CSstoragePath/aperez/out/pool_occupancy_fresh
-#echo $date_s $slots_drain_0 $slots_drain_1 $slots_drain_2 $slots_drain_3 $slots_drain_4 $slots_drain_5 $slots_drain_6 $slots_drain_7 $slots_drain_8 >>/crabprod/CSstoragePath/aperez/out/pool_occupancy_drain
+echo $date_s $slots_fresh_0 $slots_fresh_1 $slots_fresh_2 $slots_fresh_3 $slots_fresh_4 $slots_fresh_5 $slots_fresh_6 $slots_fresh_7 $slots_fresh_8 >>$OUTDIR/out/pool_occupancy_fresh
+#echo $date_s $slots_drain_0 $slots_drain_1 $slots_drain_2 $slots_drain_3 $slots_drain_4 $slots_drain_5 $slots_drain_6 $slots_drain_7 $slots_drain_8 >>$OUTDIR/out/pool_occupancy_drain
 
 
