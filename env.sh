@@ -1,0 +1,7 @@
+WORKDIR="/data/srv/aperezca/Monitoring/queries"
+OUTDIR="/data/srv/aperezca/Monitoring/out/Global_pool"
+OUTDIRT0="/data/srv/aperezca/Monitoring/out/T0"
+OUTDIRVOL="/data/srv/aperezca/Monitoring/out/Volunteer"
+MAKEHTMLDIR="/data/srv/aperezca/Monitoring/make_html"
+HTMLDIR="/data/srv/aperezca/Monitoring/HTML"
+WEBPATH="https://cms-htcondor-monitor.web.cern.ch/cms-htcondor-monitor/aperezca/HTML/"
