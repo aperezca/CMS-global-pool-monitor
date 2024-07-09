@@ -1,4 +1,4 @@
-#Interval to plot in mm/dd/yyyy format
+#Interval to plot in yyyy/mm/dd format, e.g. 2019/01/01
 mysite=$1
 dstart=$2
 dend=$3
@@ -7,7 +7,7 @@ start_t=$(date -d $dstart -u +%s)
 end_t=$(date -d $dend -u +%s)
 
 source /data/srv/aperezca/Monitoring/env.sh
-OUT=$HTMLDIR"/T2s/usage_allocated_"$mysite"_"$(echo $dstart |awk -F"/" '{print $1 $2 $3}')"_"$(echo $dend |awk -F"/" '{print $1 $2 $3}')".html"
+OUT=$HTMLDIR"/T2s/multicore_usage_"$mysite"_"$(echo $dstart |awk -F"/" '{print $1 $2 $3}')"_"$(echo $dend |awk -F"/" '{print $1 $2 $3}')".html"
 
 #--------------------
 echo '<html>
@@ -23,28 +23,29 @@ google.setOnLoadCallback(drawChart);
 function drawChart() {">>$OUT
 
 echo $dstart $dend
+echo $start_t $end_t
 
 for site in $(echo $mysite); do
 	#echo $site
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
-      	data_$site.addColumn('number', 'CPU cores'); 
+      	data_$site.addColumn('number', 'Busy cores'); 
+	data_$site.addColumn('number', 'Idle cores');
 	data_$site.addRows([">>$OUT
-	rm $WORKDIR/status/input_file_use_$site
+	rm $WORKDIR/status/single_site/input_file_use_$site
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		if [[ $time -gt $start_t ]] && [[ $time -lt $end_t ]]; then
-			echo $line>> $WORKDIR/status/input_file_use_$site
+			echo $line>> $WORKDIR/status/single_site/input_file_use_$site
 			let timemil=1000*$time
-			content=$(echo $line |awk '{print $5+$6}')
+			content=$(echo $line |awk '{print $5", "$6}')
 			echo "[new Date($timemil), $content], " >>$OUT
 		fi
-	done <$OUTDIR/count_$site
-	#done <$OUTDIRT0/count_$site
-        list=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_file_use_$site)
+	done <$OUTDIRT0/count_$site
+        list=$(python $WORKDIR/get_averages.py $WORKDIR/status/single_site/input_file_use_$site)
         list_2=$(echo $list |awk -F"] " '{print $4"]", $5"]"}')
         declare "stats_$site=$(echo $list_2)"
-	rm $WORKDIR/status/input_file_use_$site
+	rm $WORKDIR/status/single_site/input_file_use_$site
 
 	echo "      ]);
 
@@ -53,7 +54,7 @@ for site in $(echo $mysite); do
                 isStacked: 'true',
 		explorer: {},
                 'height':500,
-		colors: ['#0040FF'],
+		colors: ['#0040FF', '#FF0000'],
                 hAxis: {title: 'Time'},
                 vAxis: {title: 'Number of cores'}
         };

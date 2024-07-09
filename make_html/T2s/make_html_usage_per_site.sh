@@ -1,12 +1,15 @@
-#Interval to plot in mm/dd/yyyy format
+#Interval to plot in yyyy/mm/dd format, e.g. 2019/01/01
 mysite=$1
-start=$2
-end=$3
+dstart=$2
+dend=$3
 
-start_t=$(date -d $start -u +%s)
-end_t=$(date -d $end -u +%s)
+start_t=$(date -d $dstart -u +%s)
+end_t=$(date -d $dend -u +%s)
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/T2s/multicore_usage_"$mysite"_"$(echo $start |awk -F"/" '{print $1 $2 $3}')"_"$(echo $end |awk -F"/" '{print $1 $2 $3}')".html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR"/T2s/multicore_usage_"$mysite"_"$(echo $dstart |awk -F"/" '{print $1 $2 $3}')"_"$(echo $dend |awk -F"/" '{print $1 $2 $3}')".html"
+
+#--------------------
 echo '<html>
 <head>
 <title>CMS multicore pilots core usage monitor</title>
@@ -19,7 +22,8 @@ google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
 
-echo $start $end
+echo $dstart $dend
+echo $start_t $end_t
 
 for site in $(echo $mysite); do
 	#echo $site
@@ -28,20 +32,21 @@ for site in $(echo $mysite); do
       	data_$site.addColumn('number', 'Busy cores'); 
 	data_$site.addColumn('number', 'Idle cores');
 	data_$site.addRows([">>$OUT
-	rm /home/aperez/status/input_file_use_$site
+	rm $WORKDIR/status/single_site/input_file_use_$site
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		if [[ $time -gt $start_t ]] && [[ $time -lt $end_t ]]; then
-			echo $line>> /home/aperez/status/input_file_use_$site
+			echo $line>> $WORKDIR/status/single_site/input_file_use_$site
 			let timemil=1000*$time
 			content=$(echo $line |awk '{print $5", "$6}')
 			echo "[new Date($timemil), $content], " >>$OUT
 		fi
-	done </crabprod/CSstoragePath/aperez/out/count_$site
-        list=$(python /home/aperez/get_averages.py /home/aperez/status/input_file_use_$site)
+	done <$OUTDIR/count_$site
+	#done <$OUTDIRT0/count_$site
+        list=$(python $WORKDIR/get_averages.py $WORKDIR/status/single_site/input_file_use_$site)
         list_2=$(echo $list |awk -F"] " '{print $4"]", $5"]"}')
         declare "stats_$site=$(echo $list_2)"
-	rm /home/aperez/status/input_file_use_$site
+	rm $WORKDIR/status/single_site/input_file_use_$site
 
 	echo "      ]);
 
@@ -72,7 +77,7 @@ p {text-align: center;
 
 <body>
     <div id="header">
-        <h2>MULTICORE PILOT USAGE OF CPU CORES AT CMS '$mysite' from '$start' until '$end', updated at '$(date -u)'<br>
+        <h2>MULTICORE PILOT USAGE OF CPU CORES AT CMS '$mysite' from '$dstart' until '$dend', updated at '$(date -u)'<br>
         </h2>
 
 	</h2>
@@ -88,3 +93,4 @@ done>>$OUT
 echo "
 </body>
 </html>" >>$OUT
+

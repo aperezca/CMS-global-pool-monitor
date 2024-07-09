@@ -6,7 +6,10 @@ end=$3
 start_t=$(date -d $start -u +%s)
 end_t=$(date -d $end -u +%s)
 
-OUT="/crabprod/CSstoragePath/aperez/HTML/T2s/jobstatus_"$mysite"_"$(echo $start |awk -F"/" '{print $1 $2 $3}')"_"$(echo $end |awk -F"/" '{print $1 $2 $3}')".html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR"/T2s/jobstatus_"$mysite"_"$(echo $start |awk -F"/" '{print $1 $2 $3}')"_"$(echo $end |awk -F"/" '{print $1 $2 $3}')".html"
+
+#-------------------
 echo '<html>
 <head>
 <title>CMS global pool running jobs per site monitor</title>
@@ -25,28 +28,32 @@ for site in $(echo $mysite); do
 	data_$site.addColumn('datetime', 'Date');
       	data_$site.addColumn('number', 'production'); 
 	data_$site.addColumn('number', 'analysis');
+	data_$site.addColumn('number', 'tier0');
 	data_$site.addRows([">>$OUT
-	rm /home/aperez/status/input_jobs_$site
+	rm $WORKDIR/status/input_jobsonly_$site
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		if [[ $time -gt $start_t ]] && [[ $time -lt $end_t ]]; then
-			echo $line>> /home/aperez/status/input_jobs_$site
 			let timemil=1000*$time
-			content=$(echo $line |awk '{print $2", "$3}')
+			if [[ $(echo $line |wc -w) -eq 4 ]]; then
+                        	content=$(echo $line |awk '{print $2", "$3", "$4}')
+                	else
+                        	content=$(echo $line |awk '{print $2", "$3", 0"}')
+                	fi
+			echo $time $content >> $WORKDIR/status/input_jobsonly_$site
 			echo "[new Date($timemil), $content], " >>$OUT
 		fi
-	done </crabprod/CSstoragePath/aperez/out/jobs_running_$site
-	declare "stats_$site=$(python /home/aperez/get_averages.py /home/aperez/status/input_jobs_$site)"
-	rm /home/aperez/status/input_jobs_$site
+	done <$OUTDIR/jobs_running_$site
+	declare "stats_$site=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobsonly_$site)"
+	rm $WORKDIR/status/input_jobsonly_$site
 
 	echo "      ]);
-
         var options_$site = {
                 title: '$site',
                 isStacked: 'true',
         	explorer: {},
                 'height':500,
-		colors: ['#1569C7', '#52D017'],
+		colors: ['#1569C7', '#52D017', '#ff8553'],
                 hAxis: {title: 'Time'},
                 vAxis: {title: 'Number of cores in running jobs'}
         };
@@ -71,9 +78,9 @@ p {text-align: center;
         <h2>GLOBAL POOL RUNNING JOBS AT CMS '$mysite' from '$start' until '$end', updated at '$(date -u)'<br>
 	</h2>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_'$list'_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_'$list'_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/longjobstatus_'$list'_720h.html">1month</a>
+<a href="'$WEBPATH'JobInfo/jobstatus_'$list'_24h.html">24h</a>
+<a href="'$WEBPATH'JobInfo/jobstatus_'$list'_168h.html">1week</a>
+<a href="'$WEBPATH'JobInfo/longjobstatus_'$list'_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
@@ -85,3 +92,4 @@ done>>$OUT
 echo "
 </body>
 </html>" >>$OUT
+
