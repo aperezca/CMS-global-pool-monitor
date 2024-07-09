@@ -16,8 +16,10 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-source /data/srv/aperezca/Monitoring/env_itb.sh
-OUT=$HTMLDIR"/Schedds/"$long$schedd"_status_"$int"h.html"
+WORKDIR="/home/aperez/scale_test_monitoring"
+OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
+
+OUT=$OUTDIR"/HTML/Schedds/"$long$schedd"_status_"$int"h.html"
 echo '<html>
 <head>
 <title>Schedd status monitor</title>
@@ -38,7 +40,7 @@ data_jobs.addColumn('number', 'Running jobs');
 data_jobs.addColumn('number', 'Queued jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/jobs_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobs_$schedd$int
+tail -n $n_lines $OUTDIR/out/jobs_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobs_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -71,7 +73,7 @@ data_jobrate.addColumn('number', 'JobsCompleted');
 data_jobrate.addColumn('number', 'JobsSubmitted');
 
 data_jobrate.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/recentjobs_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/recentjobs_$schedd$int
+tail -n $n_lines $OUTDIR/out/recentjobs_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/recentjobs_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -81,6 +83,7 @@ done <$WORKDIR/status/recentjobs_$schedd$int
 stats_jobrate=$(python $WORKDIR/get_averages.py $WORKDIR/status/recentjobs_$schedd$int)
 rm $WORKDIR/status/recentjobs_$schedd$int
 
+# colors: ['#0040FF', '#FFBF00', '#0040FF'],
 echo "      ]);
 var options_jobrate = {
         title: '$schedd job rates ',
@@ -96,7 +99,6 @@ var chart_jobrate = new google.visualization.LineChart(document.getElementById('
 chart_jobrate.draw(data_jobrate, options_jobrate);">>$OUT
 
 #--------------------------
-
 # Jobs x cores in schedd
 echo "var data_jobcores = new google.visualization.DataTable();
 data_jobcores.addColumn('datetime', 'Date');
@@ -104,7 +106,7 @@ data_jobcores.addColumn('number', 'Cores running jobs');
 data_jobcores.addColumn('number', 'Cores queued jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/jobscores_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobscores_$schedd$int
+tail -n $n_lines $OUTDIR/out/jobscores_$schedd|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobscores_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -136,7 +138,7 @@ data_clusters.addColumn('datetime', 'Date');
 data_clusters.addColumn('number', 'Autoclusters');
 
 data_clusters.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/autoclusters_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_clusters_$schedd$int
+tail -n $n_lines $OUTDIR/out/autoclusters_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_clusters_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -167,7 +169,7 @@ data_dutycycle.addColumn('datetime', 'Date');
 data_dutycycle.addColumn('number', 'RecentCoreDutyCycle');
 
 data_dutycycle.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/dutycycle_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_dutycycle_$schedd$int
+tail -n $n_lines $OUTDIR/out/dutycycle_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_dutycycle_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -198,7 +200,7 @@ data_resrequest.addColumn('datetime', 'Date');
 data_resrequest.addColumn('number', 'RecentResRequestsSent');
 
 data_resrequest.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/resrequest_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_resrequest_$schedd$int
+tail -n $n_lines $OUTDIR/out/resrequest_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_resrequest_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -229,7 +231,7 @@ data_owners.addColumn('datetime', 'Date');
 data_owners.addColumn('number', 'NumOwners');
 
 data_owners.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/owners_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_owners_$schedd$int
+tail -n $n_lines $OUTDIR/out/owners_$schedd|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_owners_$schedd$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -252,6 +254,7 @@ var options_owners = {
 
 var chart_owners = new google.visualization.AreaChart(document.getElementById('chart_div_owners'));
 chart_owners.draw(data_owners, options_owners);">>$OUT
+
 #---------------
 
 echo '
@@ -268,8 +271,8 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>'$schedd' STATUS MONITOR for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="'$WEBPATH'Schedds/'$schedd'_status_24h.html">24h</a>
-	<a href="'$WEBPATH'Schedds/'$schedd'_status_168h.html">1week</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/Schedds/'$schedd'_status_24h.html">24h</a>
+	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/Schedds/'$schedd'_status_168h.html">1week</a>
 	</h2><br>
     </div>
 <br>

@@ -167,6 +167,80 @@ var chart_clusters_q = new google.visualization.AreaChart(document.getElementByI
 chart_clusters_q.draw(data_clusters_q, options_clusters_q);">>$OUT
 
 #---------------------
+# Jobs for each group in pool:
+for i in 'prod' 'crab' 'tier0' 'other'; do
+	#echo "jobs" $i
+	echo "var data_jobs_$i = new google.visualization.DataTable();
+	data_jobs_$i.addColumn('datetime', 'Date');
+	data_jobs_$i.addColumn('number', 'Running jobs');
+	data_jobs_$i.addColumn('number', 'Queued jobs');
+
+	data_jobs_$i.addRows([">>$OUT
+	tail -n $n_lines $OUTDIR/jobs_size_$i |awk -v var="$ratio" 'NR % var == 0' |awk '{print $1, $2, $3}'|sort>$WORKDIR/status/input_jobs_size_$i$int
+	while read -r line; do
+		#echo $line
+        	time=$(echo $line |awk '{print $1}')
+        	let timemil=1000*$time
+        	content=$(echo $line |awk '{print $2", "$3}')
+        	echo "[new Date($timemil), $content], " >>$OUT
+	done <$WORKDIR/status/input_jobs_size_$i$int
+	list=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobs_size_$i$int)
+	#list_2=$(echo $list |awk -F"] " '{print $4"]", $5"]"}')
+        declare "stats_jobs_$i=$(echo $list)"
+	#echo $list
+	rm $WORKDIR/status/input_jobs_size_$i$int
+
+	echo "      ]);
+	var options_jobs_$i = {
+        	title: 'Global pool $i job numbers',
+        	isStacked: 'true',
+        	explorer: {},
+        	'height':500,
+        	colors: ['#0040FF', '#FFBF00'],
+        	hAxis: {title: 'Time'},
+        	vAxis: {title: 'Number of jobs'}
+        	};
+
+	var chart_jobs_$i = new google.visualization.AreaChart(document.getElementById('chart_div_jobs_$i'));
+	chart_jobs_$i.draw(data_jobs_$i, options_jobs_$i);">>$OUT
+
+	# job cores in pool:
+	#echo "job cores" $i
+	echo "var data_jobcores_$i = new google.visualization.DataTable();
+	data_jobcores_$i.addColumn('datetime', 'Date');
+	data_jobcores_$i.addColumn('number', 'Cores running jobs');
+	data_jobcores_$i.addColumn('number', 'Cores queued jobs');
+
+	data_jobcores_$i.addRows([">>$OUT
+	#ls -l $OUTDIR/jobcores_size_$i
+	tail -n $n_lines $OUTDIR/jobcores_size_$i |awk -v var="$ratio" 'NR % var == 0'|sort> $WORKDIR/status/input_jobcores_size_$i$int
+	#ls -l $WORKDIR/status/input_jobcores_size_$i$int
+	while read -r line; do
+		#echo $line
+        	time=$(echo $line |awk '{print $1}')
+        	let timemil=1000*$time
+        	content=$(echo $line |awk '{print $2", "$3}')
+        	echo "[new Date($timemil), $content], " >>$OUT
+	done <$WORKDIR/status/input_jobcores_size_$i$int
+	list=$(python $WORKDIR/get_averages.py $WORKDIR/status/input_jobcores_size_$i$int)
+        declare "stats_jobcores_$i=$(echo $list)"
+	#echo $list
+	rm $WORKDIR/status/input_jobcores_size_$i$int
+
+	echo "      ]);
+	var options_jobcores_$i = {
+        	title: 'Global pool cores in $i job numbers',
+        	isStacked: 'true',
+        	explorer: {},
+        	'height':500,
+        	colors: ['#0040FF', '#FFBF00'],
+        	hAxis: {title: 'Time'},
+        	vAxis: {title: 'Number of cores'}
+        	};
+
+	var chart_jobcores_$i = new google.visualization.AreaChart(document.getElementById('chart_div_jobcores_$i'));
+	chart_jobcores_$i.draw(data_jobcores_$i, options_jobcores_$i);">>$OUT
+done
 #---------------
 
 echo '
@@ -197,6 +271,15 @@ echo ' <div id="chart_div_jobs"></div><p>'$(echo "[avg, min, max]: " $stats_jobs
 echo ' <div id="chart_div_jobcores"></div><p>'$(echo "[avg, min, max]: " $stats_jobcores)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_clusters"></div><p>'$(echo "[avg, min, max]: " $stats_clusters)'</p><br><br>'>>$OUT
 echo ' <div id="chart_div_clusters_q"></div><p>'$(echo "[avg, min, max]: " $stats_clusters_q)'</p><br><br>'>>$OUT
+
+for i in 'prod' 'crab' 'tier0' 'other'; do
+	var1="stats_jobs_$i"
+	var2="stats_jobcores_$i"
+	#echo "${!var1}"
+	#echo "${!var2}"
+	echo ' <div id="chart_div_jobs_'$i'"></div><p>'$(echo "[avg, min, max]: " "${!var1}")'</p><br><br>'
+	echo ' <div id="chart_div_jobcores_'$i'"></div><p>'$(echo "[avg, min, max]: " "${!var2}")'</p><br><br>'
+done>>$OUT
 
 echo "
 </body>
