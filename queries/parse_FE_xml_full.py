@@ -2,14 +2,14 @@
 
 # Parser for Front End status xml
 import sys
-import cElementTree as ElementTree
+#import cElementTree as ElementTree
+import xml.etree.cElementTree as ElementTree
 
 file_name=sys.argv[1]
 #print file_name
 
 #Parse FE status xml
 tree = ElementTree.parse(file_name)
-#tree = ElementTree.parse("/home/aperez/FE_status/FE_CERN_status.xml")
 root = tree.getroot()
 
 #Get element "factories" per FE group

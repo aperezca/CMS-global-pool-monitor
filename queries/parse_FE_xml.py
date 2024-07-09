@@ -2,16 +2,17 @@
 
 # Parser for Front End status xml
 import sys
-import cElementTree as ElementTree
+#import cElementTree as ElementTree
+import xml.etree.cElementTree as ElementTree
 file_name=sys.argv[1]
 site_range=sys.argv[2]
 
 #print "Must provide (1) FE xml file and (2) site range (T1s, T2s)"
 
 #Get sites and entries from lists:
-if site_range=="T1s": f_sites = open('/home/aperez/entries/T1_sites', 'r')
-if site_range=="T2s": f_sites = open('/home/aperez/entries/T2_sites', 'r')
-
+if site_range=="T1s": f_sites = open('/data/srv/aperezca/Monitoring/queries/entries/T1_sites', 'r')
+if site_range=="T2s": f_sites = open('/data/srv/aperezca/Monitoring/queries/entries/T2_sites', 'r')
+if site_range=="T3s": f_sites = open('/data/srv/aperezca/Monitoring/queries/entries/T3_sites', 'r')
 
 sites = []
 for line in f_sites.readlines(): sites.append(line.split('\n')[0])

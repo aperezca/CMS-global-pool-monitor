@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python
 
 # Get averages for data collected by monitoring scripts
 import sys, commands
@@ -11,7 +11,7 @@ except:
 try:
 	date_min=sys.argv[2]
 	comm="date -d "+str(date_min)+" -u +%s"
-	#print "from ",date_min
+	print "from ",date_min
 	date_min_s=int(commands.getoutput(comm))
 except:
 	#date_min_s=0
@@ -21,7 +21,7 @@ except:
 try:
 	date_max=sys.argv[3]
 	comm="date -d "+str(date_max)+" -u +%s"
-        #print "to ", date_max
+        print "to ", date_max
 	date_max_s=int(commands.getoutput(comm))
 except:
 	#date_max_s=9999999999
@@ -34,9 +34,10 @@ try:
 except:
 	daily=False
 
-#daily=True	
-#print "from ", date_min_s, "to ", date_max_s
-#if not daily: print "requested single average values for the whole range"
+#print daily
+daily=True	
+print "from ", date_min_s, "to ", date_max_s
+if not daily: print "requested single average values for the whole range"
 
 # Get and filter entries in the time range by the first field which is timestamp
 
@@ -54,54 +55,57 @@ def lines_in_range( file, min_s, max_s ):
 # Get and print averages 
 def average( lines ): 
 	#first transpose lines into columns:
+	#print lines
 	columns = {}
-	if len(lines)>0:
-		entries = len(lines)
+	n_rows=len(lines)
+	if n_rows>0:
 		dim_0 = len(lines[0])
 		dim_1 = len(lines[1])
 		dim_2 = len(lines[2])
-		dim = max([dim_0, dim_1, dim_2])
-		for i in range(dim):
+		n_col = max([dim_0, dim_1, dim_2])
+		for i in range(n_col):
 			columns[i]=[]
-			for line in lines:
+			for row in lines:
 				try:
-					columns[i].append(int(line[i]))
+					columns[i].append(int(row[i]))
 				except:
 					columns[i].append(0)
 	else:
 		print "found no points matching that time interval"
 		dim=0
 
+	#for col in range(n_col): print columns[col]
 	#print columns
-	#print len(columns), entries, dim
+	#print n_rows, n_col, len(columns)
 
 	results=[]
 	# Get average, min, max:
 	#for i in range(dim): results.append( [float(sum(columns[i])/entries), min(columns[i]), max(columns[i])])
 	# Get only average:
-	for i in range(dim): results.append(float(sum(columns[i])/entries))
+	for i in range(n_col): results.append(float(sum(columns[i])/n_rows))
 	return results
 #---------------
 if not daily:
 	my_lines = lines_in_range(file_name, date_min_s, date_max_s)
 	results = average(my_lines)
-	#print results
+	print results
 	#print results[2], results[4], float(results[4]/results[2])
-	print float(results[4]/results[2])
+	#print float(results[4]/results[2])
 else:
 	start=date_min_s
 	end=start+86400
 	i=1
-	while end<date_max_s:
+	while end<date_max_s+1:
         	date_start=commands.getoutput("date -d @"+str(start)+" -u +%Y-%m-%d")
 		my_lines = lines_in_range(file_name, start, end)
 		if len(my_lines)!=0: 
 			results = average(my_lines)
-			print date_start, results[2], results[4]
+			print date_start, results
 			start=end
                         end+=86400
                         i+=1
 		else:
+			print date_start
 			start=end
 			end+=86400
 			i+=1

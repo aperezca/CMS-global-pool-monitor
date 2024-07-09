@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python
 
 # Get averages for data collected by monitoring scripts
 import sys, commands
