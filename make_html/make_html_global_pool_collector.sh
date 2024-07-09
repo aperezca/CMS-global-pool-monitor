@@ -13,10 +13,9 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
-
-OUT=$OUTDIR"/HTML/"$long"global_pool_collector_"$int"h.html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR/$long"global_pool_collector_"$int"h.html"
+#--------------------
 echo '<html>
 <head>
 <title>CMS Global pool collector metrics</title>
@@ -38,7 +37,7 @@ function drawChart() {">>$OUT
 # SubmitterAds
 
 #-------------
-tail -n $n_lines $OUTDIR/out/collector_global_pool|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_global_collector$int
+tail -n $n_lines $OUTDIR/collector_global_pool|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_global_collector$int
 
 # -------------------------------
 # CoreDutyCycle in collector
@@ -148,9 +147,9 @@ p {text-align: center;
 
     <div id="header">
         <h2>CMS Global pool collector metrics monitor for the last '$int' hours, updated at '$(date -u)'<br>
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_collector_24h.html">24h</a>
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_collector_168h.html">1week</a>
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_collector_720h.html">1month</a>
+        <a href="'$WEBPATH'global_pool_collector_24h.html">24h</a>
+        <a href="'$WEBPATH'global_pool_collector_168h.html">1week</a>
+        <a href="'$WEBPATH'longglobal_pool_collector_720h.html">1month</a>
         <br><br>
         </h2>
     </div>

@@ -13,9 +13,10 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
-OUT=$OUTDIR"/HTML/"$long"global_pool_fragment_"$int"h.html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR/$long"global_pool_fragment_"$int"h.html"
+
+#-------------------
 echo '<html>
 <head>
 <title>CMS global pool monitor on running glideins fragmentation</title>
@@ -42,7 +43,7 @@ data_fresh.addColumn('number', 'slots_7_cores');
 data_fresh.addColumn('number', 'slots_8_cores');
 
 data_fresh.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_part_fresh$int
+tail -n $n_lines $OUTDIR/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_part_fresh$int
 while read -r line; do
 	time=$(echo $line |awk '{print $1}')
 	let timemil=1000*$time
@@ -74,7 +75,7 @@ data_dyn.addColumn('number', 'n_dyn_slots');
 data_dyn.addColumn('number', 'n_sta_slots');
 
 data_dyn.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_dynslots$int
+tail -n $n_lines $OUTDIR/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_dynslots$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -112,7 +113,7 @@ data_cern.addColumn('number', 'slots_7_cores');
 data_cern.addColumn('number', 'slots_8_cores');
 
 data_cern.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/T0/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/CERN_pool/input_part_fresh$int
+tail -n $n_lines $OUTDIRT0/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/CERN_pool/input_part_fresh$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -143,7 +144,7 @@ data_dyn_cern.addColumn('datetime', 'Date');
 data_dyn_cern.addColumn('number', 'n_dyn_slots');
 
 data_dyn_cern.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/T0/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/CERN_pool/input_dynslots$int
+tail -n $n_lines $OUTDIRT0/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/CERN_pool/input_dynslots$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -181,7 +182,7 @@ data_volunteer.addColumn('number', 'slots_7_cores');
 data_volunteer.addColumn('number', 'slots_8_cores');
 
 data_volunteer.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/Volunteer/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/Volunteer_pool/input_part_fresh$int
+tail -n $n_lines $OUTDIRVOL/pool_partition_fresh| awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/Volunteer_pool/input_part_fresh$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -211,7 +212,7 @@ data_dyn_volunteer.addColumn('datetime', 'Date');
 data_dyn_volunteer.addColumn('number', 'n_dyn_slots');
 
 data_dyn_volunteer.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/Volunteer/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/Volunteer_pool/input_dynslots$int
+tail -n $n_lines $OUTDIRVOL/pool_dynslots|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/Volunteer_pool/input_dynslots$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -249,9 +250,9 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>CMS Pools partitionable slot fragmentation in running glideins for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_fragment_24h.html">24h</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_fragment_168h.html">1week</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_fragment_720h.html">1month</a>
+	<a href="'$WEBPATH'global_pool_fragment_24h.html">24h</a>
+	<a href="'$WEBPATH'global_pool_fragment_168h.html">1week</a>
+	<a href="'$WEBPATH'longglobal_pool_fragment_720h.html">1month</a>
 
 	</h2>
 	<br>

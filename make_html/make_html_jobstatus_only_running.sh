@@ -262,9 +262,9 @@ p {text-align: center;
         <h2>CMS GLOBAL POOL JOB STATUS MONITOR: jobs in the global pool for the last '$int' hours, updated at '$(date -u)'<br>
 	</h2><br>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longjobstatus_720h.html">1month</a>
+<a href="'$WEBPATH'jobstatus_24h.html">24h</a>
+<a href="'$WEBPATH'jobstatus_168h.html">1week</a>
+<a href="'$WEBPATH'longjobstatus_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 

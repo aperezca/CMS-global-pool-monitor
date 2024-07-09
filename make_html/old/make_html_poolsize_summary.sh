@@ -212,9 +212,9 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>CMS GLOBAL POOL MONITOR: Global pool size and components for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_24h.html">24h</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/global_pool_size_168h.html">1week</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longglobal_pool_size_720h.html">1month</a>
+	<a href="'$WEBPATH'global_pool_size_24h.html">24h</a>
+	<a href="'$WEBPATH'global_pool_size_168h.html">1week</a>
+	<a href="'$WEBPATH'longglobal_pool_size_720h.html">1month</a>
 	</h2>
 	<br>
     </div>

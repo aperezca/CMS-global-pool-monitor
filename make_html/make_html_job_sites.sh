@@ -1,5 +1,3 @@
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
 
 #Interval to plot in hours
 int=$1
@@ -11,8 +9,9 @@ else
 fi
 # Range of sites to plot
 list=$2
-
-OUT="$OUTDIR/HTML/JobInfo/"$long"jobstatus_"$list"_"$int"h.html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT="$HTMLDIR/JobInfo/"$long"jobstatus_"$list"_"$int"h.html"
+#---------------
 echo '<html>
 <head>
 <title>CMS global pool running jobs per site monitor</title>
@@ -33,7 +32,7 @@ for site in `echo "All"$list"s"; cat "$WORKDIR/entries/"$list"_sites"`; do
 	data_$site.addColumn('number', 'analysis');
 	data_$site.addColumn('number', 'tier0');
 	data_$site.addRows([">>$OUT
-	tail -n $n_lines $OUTDIR/out/jobs_running_$site |sort >$WORKDIR/status/input_jobs_$site$int
+	tail -n $n_lines $OUTDIR/jobs_running_$site |sort >$WORKDIR/status/input_jobs_$site$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
@@ -79,9 +78,9 @@ p {text-align: center;
         <h2>GLOBAL POOL RUNNING JOBS AT CMS '$list's for the last '$int' hours, updated at '$(date -u)'<br>
 	</h2>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_'$list'_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobstatus_'$list'_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/longjobstatus_'$list'_720h.html">1month</a>
+<a href="'$WEBPATH'JobInfo/jobstatus_'$list'_24h.html">24h</a>
+<a href="'$WEBPATH'JobInfo/jobstatus_'$list'_168h.html">1week</a>
+<a href="'$WEBPATH'JobInfo/longjobstatus_'$list'_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 

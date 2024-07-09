@@ -1,5 +1,3 @@
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
 
 #Interval to plot in hours
 int=$1
@@ -10,7 +8,10 @@ else
 	long=""
 fi
 
-OUT="$OUTDIR/HTML/JobInfo/"$long"jobs_resizable_"$int"h.html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT="$HTMLDIR/JobInfo/"$long"jobs_resizable_"$int"h.html"
+
+#-------------
 echo '<html>
 <head>
 <title>CMS global pool monitor on resizable jobs</title>
@@ -40,7 +41,7 @@ for i in jobs jobcores; do
         data_$i.addColumn('number', '${i}_10');
 
 	data_$i.addRows([">>$OUT
-	tail -n $n_lines $OUTDIR/out/resizable_3_10_$i >$WORKDIR/status/input_resizable_${i}_$int
+	tail -n $n_lines $OUTDIR/resizable_3_10_$i >$WORKDIR/status/input_resizable_${i}_$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
@@ -87,9 +88,9 @@ p {text-align: center;
 <body>
     <div id="header">
         <h2>CMS Global pool running resizable jobs by core size for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobs_resizable_24h.html">24h</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/jobs_resizable_168h.html">1week</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/JobInfo/longjobs_resizable_720h.html">1month</a>
+	<a href="'$WEBPATH'JobInfo/jobs_resizable_24h.html">24h</a>
+	<a href="'$WEBPATH'JobInfo/jobs_resizable_168h.html">1week</a>
+	<a href="'$WEBPATH'JobInfo/longjobs_resizable_720h.html">1month</a>
 
 	</h2>
 	<br>

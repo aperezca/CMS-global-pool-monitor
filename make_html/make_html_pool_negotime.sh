@@ -13,9 +13,8 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
-OUT=$OUTDIR"/HTML/"$long"pool_negotime_"$int"h.html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR/$long"pool_negotime_"$int"h.html"
 
 echo '<html>
 <head>
@@ -37,7 +36,7 @@ for neg in NEGOTIATORT1 NEGOTIATOR NEGOTIATORUS T0 volunteer; do
 	data_$neg.addColumn('number', 'Sorting'); 
         data_$neg.addColumn('number', 'Matching');
 	data_$neg.addRows([">>$OUT
-	tail -n $n_lines $OUTDIR/out/negotime_$neg|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_$neg$int
+	tail -n $n_lines $OUTDIR/negotime_$neg|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_$neg$int
 	while read -r line; do
 		if [[ $(echo $line |wc -w ) -eq 1 ]]; then continue; fi
 		time=$(echo $line |awk '{print $1}')
@@ -80,7 +79,7 @@ data_dutycycle.addColumn('number', 'NEGO_US');
 data_dutycycle.addColumn('number', 'NEGO_CERN');
 
 data_dutycycle.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/negos_dutycycle|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_negos_dutycycle$int
+tail -n $n_lines $OUTDIR/negos_dutycycle|awk -v var="$ratio" 'NR % var == 0' >$WORKDIR/status/input_negos_dutycycle$int
 while read -r line; do
 	if [[ $(echo $line |wc -w ) -lt 5 ]]; then continue; fi
         time=$(echo $line |awk '{print $1}')
@@ -112,7 +111,7 @@ data_sch.addColumn('datetime', 'Date');
 data_sch.addColumn('number', 'Dropped schedds'); 
 
 data_sch.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/schedds_out_time >$WORKDIR/status/input_schedoot$int
+tail -n $n_lines $OUTDIR/schedds_out_time >$WORKDIR/status/input_schedoot$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -151,9 +150,9 @@ p {text-align: center;
 </head>
 
 <body><h2>CMS GLOBAL AND CERN POOLS negotiator time monitor for the last '$int' hours, updated at '$(date -u)'<br>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/pool_negotime_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/pool_negotime_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longpool_negotime_720h.html">1month</a>
+<a href="'$WEBPATH'pool_negotime_24h.html">24h</a>
+<a href="'$WEBPATH'pool_negotime_168h.html">1week</a>
+<a href="'$WEBPATH'longpool_negotime_720h.html">1month</a>
 </h2>
 <br>
  <!--Div to hold the charts-->'>>$OUT

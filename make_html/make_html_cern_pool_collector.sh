@@ -13,10 +13,10 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR/$long"cern_pool_collector_"$int"h.html"
+#----------------------------------
 
-OUT=$OUTDIR"/HTML/"$long"cern_pool_collector_"$int"h.html"
 echo '<html>
 <head>
 <title>CMS CERN pool collector metrics</title>
@@ -38,7 +38,7 @@ function drawChart() {">>$OUT
 # SubmitterAds
 
 #-------------
-tail -n $n_lines $OUTDIR/out/collector_cern_pool|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_cern_collector$int
+tail -n $n_lines $OUTDIR/collector_cern_pool|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_cern_collector$int
 
 # -------------------------------
 # CoreDutyCycle in collector
@@ -148,9 +148,9 @@ p {text-align: center;
 
     <div id="header">
         <h2>CMS CERN pool collector metrics monitor for the last '$int' hours, updated at '$(date -u)'<br>
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/cern_pool_collector_24h.html">24h</a>
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/cern_pool_collector_168h.html">1week</a>
-        <a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longcern_pool_collector_720h.html">1month</a>
+        <a href="'$WEBPATH'cern_pool_collector_24h.html">24h</a>
+        <a href="'$WEBPATH'cern_pool_collector_168h.html">1week</a>
+        <a href="'$WEBPATH'longcern_pool_collector_720h.html">1month</a>
         <br><br>
         </h2>
     </div>

@@ -13,9 +13,8 @@ if [[ $int -gt "1440" ]]; then ratio=3; fi # more than 2 months
 if [[ $int -gt "2880" ]]; then ratio=4; fi # more than 4 months
 if [[ $int -gt "4320" ]]; then ratio=6; fi # more than 6 months
 
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
-OUT=$OUTDIR"/HTML/"$long"jobstatus_"$int"h.html"
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR/$long"jobstatus_"$int"h.html"
 
 echo '<html>
 <head>
@@ -37,7 +36,7 @@ data_jobs.addColumn('number', 'Running jobs');
 data_jobs.addColumn('number', 'Queued jobs');
 
 data_jobs.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobs_size|awk -v var="$ratio" 'NR % var == 0' |awk '{print $1, $2, $3}' |sort >$WORKDIR/status/input_jobs_size$int
+tail -n $n_lines $OUTDIR/jobs_size|awk -v var="$ratio" 'NR % var == 0' |awk '{print $1, $2, $3}' |sort >$WORKDIR/status/input_jobs_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -69,7 +68,7 @@ data_jobcores.addColumn('number', 'Cores running jobs');
 data_jobcores.addColumn('number', 'Cores queued jobs');
 
 data_jobcores.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/jobcores_size|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobcores_size$int
+tail -n $n_lines $OUTDIR/jobcores_size|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_jobcores_size$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -103,7 +102,7 @@ data_clusters.addColumn('number', 'Autoclusters tier0');
 data_clusters.addColumn('number', 'Autoclusters other');
 
 data_clusters.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/autoclusters|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_autoclusters$int
+tail -n $n_lines $OUTDIR/autoclusters|awk -v var="$ratio" 'NR % var == 0' |sort >$WORKDIR/status/input_autoclusters$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -139,7 +138,7 @@ data_clusters_q.addColumn('number', 'Autoclusters prod');
 data_clusters_q.addColumn('number', 'Autoclusters crab');
 data_clusters_q.addColumn('number', 'Autoclusters tier0');
 data_clusters_q.addRows([">>$OUT
-tail -n $n_lines $OUTDIR/out/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0'|sort >$WORKDIR/status/input_autoclusters_q$int
+tail -n $n_lines $OUTDIR/autoclusters_queued|awk -v var="$ratio" 'NR % var == 0'|sort >$WORKDIR/status/input_autoclusters_q$int
 while read -r line; do
         time=$(echo $line |awk '{print $1}')
         let timemil=1000*$time
@@ -177,7 +176,7 @@ for i in 'prod' 'crab' 'tier0' 'other'; do
 	data_jobs_$i.addColumn('number', 'Queued jobs');
 
 	data_jobs_$i.addRows([">>$OUT
-	tail -n $n_lines $OUTDIR/out/jobs_size_$i |awk -v var="$ratio" 'NR % var == 0' |awk '{print $1, $2, $3}'|sort>$WORKDIR/status/input_jobs_size_$i$int
+	tail -n $n_lines $OUTDIR/jobs_size_$i |awk -v var="$ratio" 'NR % var == 0' |awk '{print $1, $2, $3}'|sort>$WORKDIR/status/input_jobs_size_$i$int
 	while read -r line; do
 		#echo $line
         	time=$(echo $line |awk '{print $1}')
@@ -213,8 +212,8 @@ for i in 'prod' 'crab' 'tier0' 'other'; do
 	data_jobcores_$i.addColumn('number', 'Cores queued jobs');
 
 	data_jobcores_$i.addRows([">>$OUT
-	#ls -l $OUTDIR/out/jobcores_size_$i
-	tail -n $n_lines $OUTDIR/out/jobcores_size_$i |awk -v var="$ratio" 'NR % var == 0'|sort> $WORKDIR/status/input_jobcores_size_$i$int
+	#ls -l $OUTDIR/jobcores_size_$i
+	tail -n $n_lines $OUTDIR/jobcores_size_$i |awk -v var="$ratio" 'NR % var == 0'|sort> $WORKDIR/status/input_jobcores_size_$i$int
 	#ls -l $WORKDIR/status/input_jobcores_size_$i$int
 	while read -r line; do
 		#echo $line
@@ -260,9 +259,13 @@ p {text-align: center;
         <h2>CMS GLOBAL POOL JOB STATUS MONITOR: jobs in the global pool for the last '$int' hours, updated at '$(date -u)'<br>
 	</h2><br>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/jobstatus_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/longjobstatus_720h.html">1month</a>
+<a href="'$WEBPATH'jobstatus_24h.html">24h</a>
+<a href="'$WEBPATH'jobstatus_168h.html">1week</a>
+<a href="'$WEBPATH'longjobstatus_720h.html">1month</a>
+<a href="'$WEBPATH'longjobstatus_2160h.html">3month</a>
+<a href="'$WEBPATH'longjobstatus_4320h.html">6month</a>
+<a href="'$WEBPATH'longjobstatus_6480h.html">9month</a>
+<a href="'$WEBPATH'longjobstatus_8640h.html">1year</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 

@@ -1,5 +1,3 @@
-WORKDIR="/home/aperez"
-OUTDIR="/crabprod/CSstoragePath/aperez"
 
 #Interval to plot in hours
 int=$1
@@ -10,7 +8,11 @@ else
         long=""
 fi
 
-OUT="$OUTDIR/HTML/T1s/"$long"multicore_occupancy_t1s_"$int"h.html"
+# Range of sites to plot
+list=$2
+source /data/srv/aperezca/Monitoring/env.sh
+OUT=$HTMLDIR/$list"s/"$long"multicore_occupancy_"$list"s_"$int"h.html"
+#---------------
 echo '<html>
 <head>
 <title>CMS multicore pilots core occupancy monitor</title>
@@ -22,8 +24,7 @@ echo "google.load('visualization', '1', {packages: ['corechart', 'line']});
 google.setOnLoadCallback(drawChart);
 
 function drawChart() {">>$OUT
-
-for site in `cat $WORKDIR/entries/T1_sites`; do
+for site in `cat "$WORKDIR/entries/"$list"_sites"`; do
 	#echo $site
 	echo "var data_$site = new google.visualization.DataTable();	
 	data_$site.addColumn('datetime', 'Date');
@@ -44,7 +45,7 @@ for site in `cat $WORKDIR/entries/T1_sites`; do
 	
 	echo "data_$site.addRows([">>$OUT
 
-	tail -n $n_lines $OUTDIR/out/occup_$site > $WORKDIR/status/input_file_occ_$site$int
+	tail -n $n_lines $OUTDIR/occup_$site > $WORKDIR/status/input_file_occ_$site$int
 	while read -r line; do
 		time=$(echo $line |awk '{print $1}')
 		let timemil=1000*$time
@@ -90,19 +91,19 @@ echo '
 
 <body>
     <div id="header">
-        <h2>CORE OCCUPANCY OF RUNNING MULTICORE PILOTS AT CMS T1s for the last '$int' hours, updated at '$(date -u)'<br>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_usage_t1s_'$int'h.html">(USAGE)</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_factory_t1s_'$int'h.html">(FACTORY STATUS)</a>
-	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_frontend_t1s_'$int'h.html">(FRONT-END)</a>
+        <h2>CORE OCCUPANCY OF RUNNING MULTICORE PILOTS AT CMS '$list's for the last '$int' hours, updated at '$(date -u)'<br>
+	<a href="'$WEBPATH'T1s/multicore_usage_T1s_'$int'h.html">(USAGE)</a>
+	<a href="'$WEBPATH'T1s/multicore_factory_T1s_'$int'h.html">(FACTORY STATUS)</a>
+	<a href="'$WEBPATH'T1s/multicore_frontend_T1s_'$int'h.html">(FRONT-END)</a>
 	</h2>
     </div>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_occupancy_t1s_24h.html">24h</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/multicore_occupancy_t1s_168h.html">1week</a>
-<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/HTML/T1s/longmulticore_occupancy_t1s_720h.html">1month</a>
+<a href="'$WEBPATH'T1s/multicore_occupancy_T1s_24h.html">24h</a>
+<a href="'$WEBPATH'T1s/multicore_occupancy_T1s_168h.html">1week</a>
+<a href="'$WEBPATH'T1s/longmulticore_occupancy_T1s_720h.html">1month</a>
 <br>
  <!--Div to hold the charts-->'>>$OUT
 
-for site in `cat $WORKDIR/entries/T1_sites`; do
+for site in `cat "$WORKDIR/entries/"$list"_sites"`; do
 	echo ' <div id="chart_div_'$site'"></div><br><br>'
 done>>$OUT
 
