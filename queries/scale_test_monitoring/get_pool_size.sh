@@ -1,14 +1,12 @@
 #!/bin/sh
-source /etc/profile.d/condor.sh
 
 # Count CPUs for multicore and single core pilots at CMS global pool
 # Antonio Perez-Calero Yzquierdo Apr. Dec. 2016
 
-WORKDIR="/home/aperez/scale_test_monitoring"
-OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
+source /data/srv/aperezca/Monitoring/env_itb.sh 
 
 collector=$($WORKDIR/collector_itb.sh)
-
+echo $collector
 condor_status -pool $collector -const '(SlotType=?="Partitionable")' -af GLIDEIN_CMSSite SlotType TotalSlotCpus TotalSlotMemory|sort |uniq -c >$WORKDIR/status/all_partitionable_glideins.txt
 
 condor_status -pool $collector -const '(SlotType=?="Static") && ((IOslots=?=undefined) || (IOslots != 1))' -af GLIDEIN_CMSSite SlotType TotalSlotCpus TotalSlotMemory|sort |uniq -c >$WORKDIR/status/all_static_glideins.txt
@@ -31,18 +29,6 @@ done<$WORKDIR/status/all_static_glideins.txt
 #echo $size_stat_T2s $size_stat_T3s
 
 date_all=`date -u +%s`
-echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>$OUTDIR/out/pool_size
+echo $date_all $size_part_T1s $size_part_T2s $size_stat_T2s $size_stat_T3s >>$OUTDIR/pool_size
 
 # -------
-
-now=$(date -u)
-OUT=$OUTDIR"/HTML/itb_pool_mcore_pilots_info.txt"
-
-# -------
-echo "## ----------------------------------------------------------------------------" >>$OUT
-echo "## INFO ON RUNNING PARTITIONABLE & STATIC PILOTS FOR ITB POOLs UPDATED AT" $now >$OUT
-echo "## ----------------------------------------------------------------------------" >>$OUT
-echo "## MCORE GLIDEINS: #pilots CMS_Site SlotType TotalSlotCPUs TotalSlotMemory " >>$OUT
-echo "## ----------------------------------------------------------------------------" >>$OUT
-cat $WORKDIR/status/all_partitionable_glideins.txt $WORKDIR/status/all_static_glideins.txt>>$OUT
-echo "## ----------------------------------------------------------------------------" >>$OUT

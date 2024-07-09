@@ -1,25 +1,21 @@
 #!/bin/sh
-source /etc/profile.d/condor.sh
-
 # Analyse idle CPUs for multicore pilots at CMS global pool
 # Antonio Perez-Calero Yzquierdo May 2016
 
-WORKDIR="/home/aperez/scale_test_monitoring"
-OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
-
+source /data/srv/aperezca/Monitoring/env_itb.sh
 collector=$($WORKDIR/collector_itb.sh)
 
 date_s=`date -u +%s`
+
+# NOTE: HLT cores are axcluded as GLIDEIN_ToRetire is undefined for those slots!
 
 #echo "Idle cores in mcore pilots in draining:"
 condor_status -pool $collector -const '(GLIDEIN_ToRetire<'${date_s}')' -af SlotType Activity State CPUs| grep -v Static| grep Idle | sort |uniq -c >$WORKDIR/status/mcore_idle_retire.txt
 
 #echo "Idle cores in mcore pilots with not enough memory:"
-
 condor_status -pool $collector -const '(GLIDEIN_ToRetire>'${date_s}') && (Memory<2000)' -af SlotType Activity State CPUs| grep -v Static | grep Idle| sort |uniq -c >$WORKDIR/status/mcore_idle_memory.txt
 
 #echo "Idle cores in mcore pilots with enough time and memory:"
-
 condor_status -pool $collector -const '(GLIDEIN_ToRetire>'${date_s}') && (Memory>2000)' -af SlotType Activity State CPUs| grep -v Static| grep Idle| sort |uniq -c >$WORKDIR/status/mcore_idle_usable.txt
 
 n_retire=0
@@ -54,4 +50,5 @@ done<$WORKDIR/status/mcore_idle_usable.txt
 
 #echo "Total:"
 #echo $date_s $n_retire $n_memory $n_usable_unclaimed $n_usable_claimed
-echo $date_s $n_retire $n_memory $n_usable_unclaimed $n_usable_claimed >>$OUTDIR/out/pool_mcoreidle
+echo $date_s $n_retire $n_memory $n_usable_unclaimed $n_usable_claimed >>$OUTDIR/pool_mcoreidle
+

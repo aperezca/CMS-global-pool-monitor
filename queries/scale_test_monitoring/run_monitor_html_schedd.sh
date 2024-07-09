@@ -1,17 +1,16 @@
 #make HTML plots for each schedd
-
-WORKDIR="/home/aperez/scale_test_monitoring"
-OUTDIR="/crabprod/CSstoragePath/aperez/scale_test_monitoring"
+source /data/srv/aperezca/Monitoring/env_itb.sh
 
 for i in 24 168; do # last day, last week, last month
-	for schedd in $(cat $WORKDIR/status/schedds_*); do
+	for schedd in $(cat $WORKDIR/status/schedd_names_*); do
 		echo $schedd $i
-		$OUTDIR/make_html_scheddstatus.sh $schedd $i
+		$MAKEHTMLDIR/make_html_scheddstatus.sh $schedd $i
 	done
 done
 
+# ------------
 # Make index html file 
-OUT=$OUTDIR"/HTML/Schedds/schedd_status_index.html"
+OUT=$HTMLDIR"/Schedds/schedd_status_index.html"
 echo '<html>
 <head>
 <title>Schedd status monitor</title>
@@ -25,12 +24,18 @@ p {text-align: center;
 <body>
     <div id="header">
 	<h2> Schedd status monitor index <br></h2><br>'>$OUT
-for i in 'prod' 'crab'; do
+# Insert info on dropped schedds:
+while read -r line; do
+	echo $line '<br>'>>$OUT
+done<$HTMLDIR/globalpool_dropped_schedds.txt
+echo '<br>' >>$OUT
+
+for i in 'prod' 'crab' 'tier0' 'other'; do
 	echo '<h3>'$i' schedds </h3><br>' >>$OUT
-	for schedd in $(cat $WORKDIR/status/schedds_$i); do
-        	echo $schedd '<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/Schedds/'$schedd'_status_24h.html">24h</a>
-        	<a href="http://submit-3.t2.ucsd.edu/CSstoragePath/aperez/scale_test_monitoring/HTML/Schedds/'$schedd'_status_168h.html">1week</a>
-		<a href="http://hcc-ganglia.unl.edu/?r=hour&cs=&ce=&c=crab-infrastructure&h='$schedd'&tab=m&vn=&hide-hf=false&m=load_report&sh=1&z=small&hc=4&host_regex=&max_graphs=0&s=by+name">ganglia</a>
+	for schedd in $(cat $WORKDIR/status/schedd_names_$i); do
+        	echo $schedd '<a href="'$WEBPATH'Schedds/'$schedd'_status_24h.html" target="blank">24h</a>
+        	<a href="'$WEBPATH'Schedds/'$schedd'_status_168h.html" target="blank">1week</a>
+		<a href="http://hcc-ganglia.unl.edu/?r=hour&cs=&ce=&c=crab-infrastructure&h='$schedd'&tab=m&vn=&hide-hf=false&m=load_report&sh=1&z=small&hc=4&host_regex=&max_graphs=0&s=by+name" target="blank">ganglia</a>
 	<br>'>>$OUT
 	done
 	echo '<br>'>>$OUT
